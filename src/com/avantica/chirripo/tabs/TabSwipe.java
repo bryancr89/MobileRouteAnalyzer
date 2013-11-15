@@ -5,7 +5,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 public class TabSwipe extends FragmentPagerAdapter {
-
     public TabSwipe(FragmentManager fm) {
         super(fm);
     }
