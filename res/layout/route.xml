@@ -18,36 +18,43 @@
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="300dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/route_name"
         android:layout_margin="10dp"
-        android:layout_below="@+id/route_name"  
         class="com.google.android.gms.maps.SupportMapFragment" />
 
-    <Button
-        android:id="@+id/end_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/start_button"
-        android:layout_alignBottom="@+id/start_button"
-        android:layout_marginLeft="15dp"
-        android:layout_toRightOf="@+id/start_button"
-        android:text="@string/end_button" />
-
-    <Button
-        android:id="@+id/start_button"
+    <TextView
+        android:id="@+id/show_speed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/map"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="15dp"
-        android:text="@string/start_button" />
+        android:layout_below="@+id/map"
+        android:text="@string/show_speed" />
 
-    <Button
+    <ImageButton
+        android:id="@+id/start_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/show_speed"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="14dp"
+        android:src="@drawable/ic_action_play"/>
+
+    <ImageButton
         android:id="@+id/save_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/end_button"
-        android:layout_alignBottom="@+id/end_button"
         android:layout_alignRight="@+id/map"
-        android:text="@string/save_button" />
- 
+        android:layout_alignTop="@+id/stop_button"
+        android:src="@drawable/ic_action_save" />
+
+    <ImageButton
+        android:id="@+id/stop_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/start_button"
+        android:layout_marginLeft="14dp"
+        android:layout_toRightOf="@+id/start_button"
+        android:src="@drawable/ic_action_stop" />
+     
 </RelativeLayout>
