@@ -1,6 +1,6 @@
-package net.avantica.chirripo.list;
+package net.chirripo.list;
 
-import com.avantica.chirripo.mobilerouteanalyzer.R;
+import net.chirripo.mobilerouteanalyzer.R;
 
 import android.content.Context;
 import android.view.LayoutInflater;

@@ -1,4 +1,4 @@
-package net.avantica.chirripo.tabs;
+package net.chirripo.tabs;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,10 +14,8 @@ public class TabSwipe extends FragmentPagerAdapter {
  
         switch (index) {
         case 0:
-            // Top Rated fragment activity
             return new MyRoutes();
         case 1:
-            // Games fragment activity
             return new Route();
         }
  

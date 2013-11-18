@@ -1,8 +1,8 @@
-package net.avantica.chirripo.mobilerouteanalyzer;
+package net.chirripo.mobilerouteanalyzer;
 
-import com.avantica.chirripo.mobilerouteanalyzer.R;
 
-import net.avantica.chirripo.tabs.TabSwipe;
+import net.chirripo.mobilerouteanalyzer.R;
+import net.chirripo.tabs.TabSwipe;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
@@ -60,22 +60,17 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void onTabReselected(Tab tab, FragmentTransaction ft) {
-		// TODO Auto-generated method stub
-		
+	public void onTabReselected(Tab tab, FragmentTransaction ft) {		
 	}
 
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
-		// TODO Auto-generated method stub
         viewPager.setCurrentItem(tab.getPosition());
 		
 	}
 
 	@Override
 	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-		// TODO Auto-generated method stub
-		
 	}
     
 }
