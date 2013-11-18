@@ -1,4 +1,4 @@
-package com.avantica.chirripo.list;
+package net.avantica.chirripo.list;
 
 import com.avantica.chirripo.mobilerouteanalyzer.R;
 

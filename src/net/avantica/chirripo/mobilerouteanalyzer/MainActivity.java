@@ -1,5 +1,8 @@
-package com.avantica.chirripo.mobilerouteanalyzer;
+package net.avantica.chirripo.mobilerouteanalyzer;
 
+import com.avantica.chirripo.mobilerouteanalyzer.R;
+
+import net.avantica.chirripo.tabs.TabSwipe;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
@@ -7,7 +10,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 
-import com.avantica.chirripo.tabs.TabSwipe;
 
 public class MainActivity extends FragmentActivity implements
 	ActionBar.TabListener {

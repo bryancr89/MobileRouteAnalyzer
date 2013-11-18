@@ -1,4 +1,4 @@
-package com.avantica.chirripo.tabs;
+package net.avantica.chirripo.tabs;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

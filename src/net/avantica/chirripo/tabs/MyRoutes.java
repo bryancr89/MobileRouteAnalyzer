@@ -1,10 +1,7 @@
-package com.avantica.chirripo.tabs;
+package net.avantica.chirripo.tabs;
 
-import com.avantica.chirripo.list.RouteList;
-import com.avantica.chirripo.mobilerouteanalyzer.R;
-
+import net.avantica.chirripo.list.RouteList;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.avantica.chirripo.mobilerouteanalyzer.R;
 
 @SuppressLint("ValidFragment") public class MyRoutes extends Fragment {
 	
