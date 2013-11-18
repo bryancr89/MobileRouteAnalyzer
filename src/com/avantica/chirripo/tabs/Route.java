@@ -7,15 +7,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.avantica.chirripo.mobilerouteanalyzer.R;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
 
 public class Route extends Fragment {
+	
+	private GoogleMap map;
  
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
  
-        View rootView = inflater.inflate(R.layout.my_routes, container, false);
+        View rootView = inflater.inflate(R.layout.route, container, false);
          
+        map = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map))
+                .getMap();
+        
         return rootView;
     }
 }

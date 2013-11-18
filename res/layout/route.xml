@@ -1,15 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
      
-    <TextView android:layout_width="fill_parent"
+    <EditText
+        android:id="@+id/route_name"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Add Route"
-        android:textSize="20dp"
-        android:layout_centerInParent="true"/>
-     
+        android:layout_margin="5dp"
+        android:hint="@string/route_name" >
+        
+    </EditText>
+
+    <fragment
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_margin="10dp"
+        android:layout_below="@+id/route_name"  
+        class="com.google.android.gms.maps.SupportMapFragment" />
+
+    <Button
+        android:id="@+id/end_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/start_button"
+        android:layout_alignBottom="@+id/start_button"
+        android:layout_marginLeft="15dp"
+        android:layout_toRightOf="@+id/start_button"
+        android:text="@string/end_button" />
+
+    <Button
+        android:id="@+id/start_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/map"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="15dp"
+        android:text="@string/start_button" />
+
+    <Button
+        android:id="@+id/save_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/end_button"
+        android:layout_alignBottom="@+id/end_button"
+        android:layout_alignRight="@+id/map"
+        android:text="@string/save_button" />
  
 </RelativeLayout>
