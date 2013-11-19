@@ -1,7 +1,8 @@
 package net.chirripo.list;
 
+import java.util.List;
 import net.chirripo.mobilerouteanalyzer.R;
-
+import net.chirripo.models.RouteModel;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,13 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class RouteList extends ArrayAdapter<String> {
+public class RouteList extends ArrayAdapter<RouteModel> {
 	private final Context context;
-	private final String[] web;
-	public RouteList(Context context, String[] web) {
-		super(context, R.layout.route_item, web);
+	private final List<RouteModel> routes;
+	public RouteList(Context context, List<RouteModel> routes) {
+		super(context, R.layout.route_item, routes);
 		this.context = context;
-		this.web = web;
+		this.routes = routes;
 	}
 	
 	@Override
@@ -24,7 +25,7 @@ public class RouteList extends ArrayAdapter<String> {
 		View rowView= inflater.inflate(R.layout.route_item, null, true);
 		TextView txtTitle = (TextView) rowView.findViewById(R.id.textView1);
 		
-		txtTitle.setText(web[position]);
+		txtTitle.setText(routes.get(position).name);
 		
 		return rowView;
 	}
