@@ -5,17 +5,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.chirripo.mobilerouteanalyzer.R;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
@@ -30,89 +33,140 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 public class Route extends Fragment {
 	
-	private GoogleMap map;
-	private Location location;
-	private LatLng myLocation;
-	private LocationClient locationClient;
-	private float zoom = 16;
-	private View rootView;
-	private TextView speedTextView;
-	private ImageButton startButton;
-	private ImageButton stopButton;
-	private Marker startMarker;
-	private Marker endMarker;
-	private List<LatLng> wayPointsList = new ArrayList();
+	private GoogleMap _map;
+	private Location _location;
+	private LatLng _myLocation;
+	private LocationClient _locationClient;
+	private float _zoom = 16;
+	private View _rootView;
+	private TextView _speedTextView;
+	private ImageButton _startButton;
+	private ImageButton _stopButton;
+	private ImageButton _saveButton;
+	private EditText _routeName;
+	private Marker _startMarker;
+	private Marker _endMarker;
+	private List<LatLng> _wayPointsList = new ArrayList<LatLng>();
+	private boolean _isStartSet = false;
+	private boolean _isStopSet = false;
+	private static String EMPTY = "";
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
  
-        rootView = inflater.inflate(R.layout.route, container, false);
-        speedTextView = (TextView) rootView.findViewById(R.id.show_speed);
-       
+        _rootView = inflater.inflate(R.layout.route, container, false);
+        _speedTextView = (TextView) _rootView.findViewById(R.id.show_speed);
+        _routeName = (EditText) _rootView.findViewById(R.id.route_name);
         
         //initialization and onClick listener for start button
-        startButton = (ImageButton)rootView.findViewById(R.id.start_button);
-        startButton.setOnClickListener(new OnClickListener() {
+        _startButton = (ImageButton)_rootView.findViewById(R.id.start_button);
+        _startButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				
-				if(startMarker != null){
-					startMarker.remove();
-				}
-				
-				startMarker = map.addMarker(new MarkerOptions()
-		    	.position(myLocation)
-		    	.title("Start Point")
-		    	.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-				
-				//insert first way point to the list
-				wayPointsList.add(myLocation);
+				if(!_isStartSet){
+					if(_startMarker != null){
+						_startMarker.remove();
+					}
+					
+					_startMarker = _map.addMarker(new MarkerOptions()
+			    	.position(_myLocation)
+			    	.title("Start Point")
+			    	.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+					
+					//insert first way point to the list
+					_wayPointsList.add(_myLocation);
+					_isStartSet = true;
+					
+					Toast.makeText(_rootView.getContext(), "Starting Route...", Toast.LENGTH_SHORT).show();
+					
+				}else{
+					Toast.makeText(_rootView.getContext(), "Calculating Route...", Toast.LENGTH_SHORT).show();
+				}				
 			}
 		});
         
         //initialization and onClick listener for end button
-        stopButton = (ImageButton)rootView.findViewById(R.id.stop_button);
-        stopButton.setOnClickListener(new OnClickListener() {
+        _stopButton = (ImageButton)_rootView.findViewById(R.id.stop_button);
+        _stopButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				
-				if(endMarker != null){
-					endMarker.remove();
-				}
-				
-				endMarker = map.addMarker(new MarkerOptions()
-		    	.position(myLocation)
-		    	.title("End Point")
-		    	.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-				
-				//insert last way point to the list
-				wayPointsList.add(myLocation);
+				if(_wayPointsList.isEmpty()){
+					Toast.makeText(_rootView.getContext(), "Route Start Point Required", Toast.LENGTH_SHORT).show();
+				}else if(_isStopSet){
+					Toast.makeText(_rootView.getContext(), "Route Calculated", Toast.LENGTH_SHORT).show();
+				}else{
+					if(_endMarker != null){
+						_endMarker.remove();
+					}
+					
+					_endMarker = _map.addMarker(new MarkerOptions()
+			    	.position(_myLocation)
+			    	.title("End Point")
+			    	.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+					
+					//insert last way point to the list
+					_wayPointsList.add(_myLocation);
+					_isStopSet = true;
+					
+					//send to draw the route between the start point and the end point
+					PolylineOptions po = new PolylineOptions();
+					po.addAll(_wayPointsList);
+					po.width(4).color(Color.BLUE);
+					Polyline line = _map.addPolyline(po);	
+					
+					Toast.makeText(_rootView.getContext(), "Ending Route...", Toast.LENGTH_SHORT).show();
+				}				
 			}
 		});
         
+        //initialization and onClick listener for the save button
+        _saveButton = (ImageButton) _rootView.findViewById(R.id.save_button);
+        _saveButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				String getRouteName = _routeName.getText().toString();
+				
+				//validating before save the route
+				if(_wayPointsList.isEmpty()){
+					Toast.makeText(_rootView.getContext(), "No Route Specified", Toast.LENGTH_SHORT).show();
+				}else if(_wayPointsList.size() == 1){
+					Toast.makeText(_rootView.getContext(), "Route End Point Required", Toast.LENGTH_SHORT).show();
+				}else if(TextUtils.isEmpty(getRouteName.trim())){
+					Toast.makeText(_rootView.getContext(), "Route Name Required", Toast.LENGTH_SHORT).show();
+				}else{
+					Toast.makeText(_rootView.getContext(), "Route Saved", Toast.LENGTH_LONG).show();
+				}				
+			}
+		});
         
         //map initialization 
-        map = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map))
+        _map = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map))
                 .getMap();        
-        map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        map.setMyLocationEnabled(true);
+        _map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        _map.setMyLocationEnabled(true);
                
         //call the function to relocated the user in its current position
         centerMapOnMyLocation();
              
-        return rootView;
+        return _rootView;
     }
 
     //calls the events to center the map in the current location
     private void centerMapOnMyLocation() {           	
-    	locationClient = new LocationClient(rootView.getContext(), mConnectionCallbacks, mConnectionFailedListener);
-    	locationClient.connect();
+    	_locationClient = new LocationClient(_rootView.getContext(), mConnectionCallbacks, mConnectionFailedListener);
+    	_locationClient.connect();
     }
     
     //callback for connection working with the location client
@@ -125,17 +179,17 @@ public class Route extends Fragment {
         @Override
         public void onConnected(Bundle arg0) {
             LocationRequest locationRequest = LocationRequest.create();
-            locationRequest.setFastestInterval(1000);
-            locationRequest.setInterval(1000).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-            locationClient.requestLocationUpdates(locationRequest, mLocationListener);            
+            locationRequest.setFastestInterval(10000);
+            locationRequest.setInterval(10000).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            _locationClient.requestLocationUpdates(locationRequest, mLocationListener);            
             
-            location = locationClient.getLastLocation();
+            _location = _locationClient.getLastLocation();
 
-            if (location != null) {
-                myLocation = new LatLng(location.getLatitude(),
-                        location.getLongitude());
+            if (_location != null) {
+                _myLocation = new LatLng(_location.getLatitude(),
+                        _location.getLongitude());
             }
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, zoom));            
+            _map.animateCamera(CameraUpdateFactory.newLatLngZoom(_myLocation, _zoom));            
         }
     };
 
@@ -162,11 +216,14 @@ public class Route extends Fragment {
                 String samplingRate = (new DecimalFormat("0.0000").format(1/delayBtnEvents));     
 
                 float speed = (float) (location.getSpeed() * 3.6);  // Converting m/s to Km/hr
-                speedTextView.setText(speed + " kmph" + ", " + samplingRate + " Hz"); //Updating UI 
+                _speedTextView.setText(speed + " kmph" + ", " + samplingRate + " Hz"); //Updating UI 
+                
+                _myLocation = new LatLng(location.getLatitude(),
+                        location.getLongitude());
                 
                 //insert way points to the list while moving on the road 
-                if(!wayPointsList.contains(myLocation) && !wayPointsList.isEmpty()){
-                	wayPointsList.add(myLocation);
+                if(!_wayPointsList.isEmpty()){
+                	_wayPointsList.add(_myLocation);
                 }
 				
         }
