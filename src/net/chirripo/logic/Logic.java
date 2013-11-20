@@ -17,8 +17,20 @@ public class Logic {
 		return _repository.GetListRoutes();
 	}
 	
-	public long AddRoute(String routeName, double latStart, double lngStart, double latStop, double lngStop) {
-		return _repository.AddRoute(routeName, latStart, lngStart, latStop, lngStop);
+	public long AddRoute(double latStart, double lngStart) {
+		return _repository.AddRoute(latStart, lngStart);
+	}
+	
+	public void UpdateRoute(long routeId, double latStop, double lngStop){
+		_repository.UpdateRoute(routeId, latStop, lngStop);
+	}
+	
+	public void SaveRoute(long routeId, String name){
+		_repository.SaveRoute(routeId, name);
+	}
+	
+	public void AddWayPoint(long routeId, int count, double lat, double lng){
+		_repository.AddWayPoint(routeId, count, lat, lng);
 	}
 	
 }

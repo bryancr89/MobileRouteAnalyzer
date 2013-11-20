@@ -11,42 +11,58 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 public class Repository implements IRepository {
-	private SQLiteDatabase db;
-	private DaoMaster daoMaster;
-	private DaoSession daoSession;
-	
-	private RoutesDao routesDao;
-	private WayPointsDao waypointsDao;
-	private Context ctx;
-	
+	//Properties
+	private SQLiteDatabase _db;
+	private DaoMaster _daoMaster;
+	private DaoSession _daoSession;	
+	private RoutesDao _routesDao;
+	private WayPointsDao _waypointsDao;
+	private Context _ctx;
+		
+	//Public methods
 	public Repository(Context ctx){
-		this.ctx = ctx;
+		this._ctx = ctx;
 		CreateDB("llanoBonito");
 	}
 	
 	public void CreateDB(String databaseName){
-		DevOpenHelper helper = new DaoMaster.DevOpenHelper(ctx, databaseName, null);
-		db = helper.getWritableDatabase();
-		daoMaster = new DaoMaster(db);
-		daoSession = daoMaster.newSession();
+		//Little magic for the database.
+		DevOpenHelper helper = new DaoMaster.DevOpenHelper(_ctx, databaseName, null);
+		_db = helper.getWritableDatabase();
+		_daoMaster = new DaoMaster(_db);
+		_daoSession = _daoMaster.newSession();
 		
-		routesDao = daoSession.getRoutesDao();
-		waypointsDao = daoSession.getWayPointsDao();
+		//Define instances of the tables.
+		_routesDao = _daoSession.getRoutesDao();
+		_waypointsDao = _daoSession.getWayPointsDao();
 	}
 	
-	public long AddRoute(String routeName, double latStart, double lngStart, double latStop, double lngStop) {
-		Routes route= new Routes(null, routeName, latStart, lngStart, latStop, lngStop);
-        routesDao.insert(route);
+	public long AddRoute(double latStart, double lngStart){
+		Routes route= new Routes(null, "", latStart, lngStart, 0, 0);
+        _routesDao.insert(route);
 		return route.getId();
 	}
-
-	public void AddWayPoint(long routeId, int count, double lat, double lng) {
+	
+	public void UpdateRoute(long routeId, double latStop, double lngStop){
+		Routes route = GetRoute(routeId);
+		route.setLatStop(latStop);
+		route.setLngStop(lngStop);
+		_routesDao.update(route);
+	}
+	
+	public void SaveRoute(long routeId, String name){
+		Routes route = GetRoute(routeId);
+		route.setName(name);
+		_routesDao.update(route);
+	}
+	
+	public void AddWayPoint(long routeId, int count, double lat, double lng){
 		WayPoints wayPoint = new WayPoints(null, count, lat, lng, routeId);
-		waypointsDao.insert(wayPoint);
+		_waypointsDao.insert(wayPoint);
 	}
 	
 	public List<RouteModel> GetListRoutes() {
-		List<Routes> routes = routesDao.queryBuilder().list();
+		List<Routes> routes = _routesDao.queryBuilder().list();
 		List<RouteModel> result = new ArrayList<RouteModel>();
 		for (Routes element: routes) { 
 			result.add(new RouteModel(element.getId(), element.getName()));
@@ -55,10 +71,15 @@ public class Repository implements IRepository {
 	}
 	
 	public int GetRunTimesRoute(long routeId){
-		return waypointsDao.queryBuilder()
+		return _waypointsDao.queryBuilder()
 			.where(Properties.RouteId.eq(routeId))
 			.orderDesc(Properties.Count).limit(1)
 			.unique()
 			.getCount();
+	}
+	
+	//Private methods
+	private Routes GetRoute(long routeId) {
+		return _routesDao.queryBuilder().where(Properties.Id.eq(routeId)).unique();
 	}
 }

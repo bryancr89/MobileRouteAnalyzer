@@ -7,7 +7,11 @@ public interface IRepository {
 	
 	void CreateDB(String databaseName);
 	
-	long AddRoute(String routeName, double latStart, double lngStart, double latStop, double lngStop);
+	long AddRoute(double latStart, double lngStart);
+	
+	void UpdateRoute(long routeId, double latStop, double lngStop);
+	
+	void SaveRoute(long routeId, String name);
 	
 	void AddWayPoint(long routeId, int count, double lat, double lng);
 	
