@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.chirripo.logic.Logic;
 import net.chirripo.mobilerouteanalyzer.R;
 import android.graphics.Color;
 import android.location.Location;
@@ -54,7 +55,9 @@ public class Route extends Fragment {
 	private List<LatLng> _wayPointsList = new ArrayList<LatLng>();
 	private boolean _isStartSet = false;
 	private boolean _isStopSet = false;
-	private static String EMPTY = "";
+	private long _routeId = -1;
+	
+	Logic dbLogic;
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,6 +66,8 @@ public class Route extends Fragment {
         _rootView = inflater.inflate(R.layout.route, container, false);
         _speedTextView = (TextView) _rootView.findViewById(R.id.show_speed);
         _routeName = (EditText) _rootView.findViewById(R.id.route_name);
+        
+        dbLogic = new Logic(_rootView.getContext());
         
         //initialization and onClick listener for start button
         _startButton = (ImageButton)_rootView.findViewById(R.id.start_button);
@@ -85,8 +90,11 @@ public class Route extends Fragment {
 					_wayPointsList.add(_myLocation);
 					_isStartSet = true;
 					
-					Toast.makeText(_rootView.getContext(), "Starting Route...", Toast.LENGTH_SHORT).show();
+					_routeId = dbLogic.AddRoute(_myLocation.latitude, _myLocation.longitude);	
 					
+					Toast.makeText(_rootView.getContext(), "Starting Route...", Toast.LENGTH_SHORT).show();					
+									
+										
 				}else{
 					Toast.makeText(_rootView.getContext(), "Calculating Route...", Toast.LENGTH_SHORT).show();
 				}				
@@ -124,6 +132,7 @@ public class Route extends Fragment {
 					po.width(4).color(Color.BLUE);
 					Polyline line = _map.addPolyline(po);	
 					
+					dbLogic.UpdateRoute(_routeId, _myLocation.latitude, _myLocation.longitude);					
 					Toast.makeText(_rootView.getContext(), "Ending Route...", Toast.LENGTH_SHORT).show();
 				}				
 			}
@@ -145,7 +154,8 @@ public class Route extends Fragment {
 					Toast.makeText(_rootView.getContext(), "Route End Point Required", Toast.LENGTH_SHORT).show();
 				}else if(TextUtils.isEmpty(getRouteName.trim())){
 					Toast.makeText(_rootView.getContext(), "Route Name Required", Toast.LENGTH_SHORT).show();
-				}else{
+				}else{					
+					dbLogic.SaveRoute(_routeId, getRouteName);					
 					Toast.makeText(_rootView.getContext(), "Route Saved", Toast.LENGTH_LONG).show();
 				}				
 			}
@@ -222,8 +232,9 @@ public class Route extends Fragment {
                         location.getLongitude());
                 
                 //insert way points to the list while moving on the road 
-                if(!_wayPointsList.isEmpty()){
+                if(!_wayPointsList.isEmpty() && _routeId != -1){
                 	_wayPointsList.add(_myLocation);
+                	dbLogic.AddWayPoint(_routeId, 0, _myLocation.latitude, _myLocation.longitude);
                 }
 				
         }
