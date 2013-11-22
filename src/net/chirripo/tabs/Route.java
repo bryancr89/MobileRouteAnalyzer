@@ -6,6 +6,8 @@ import java.util.List;
 
 import net.chirripo.logic.Logic;
 import net.chirripo.mobilerouteanalyzer.R;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -34,7 +36,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 public class Route extends Fragment {
@@ -47,8 +48,7 @@ public class Route extends Fragment {
 	private View _rootView;
 	private TextView _speedTextView;
 	private ImageButton _startButton;
-	private ImageButton _stopButton;
-	private ImageButton _saveButton;
+	private ImageButton _stopButton;	
 	private EditText _routeName;
 	private Marker _startMarker;
 	private Marker _endMarker;
@@ -56,6 +56,7 @@ public class Route extends Fragment {
 	private boolean _isStartSet = false;
 	private boolean _isStopSet = false;
 	private long _routeId = -1;
+	private Double routeDistance = 0.0;
 	
 	Logic dbLogic;
 	
@@ -65,7 +66,6 @@ public class Route extends Fragment {
  
         _rootView = inflater.inflate(R.layout.route, container, false);
         _speedTextView = (TextView) _rootView.findViewById(R.id.show_speed);
-        _routeName = (EditText) _rootView.findViewById(R.id.route_name);
         
         dbLogic = new Logic(_rootView.getContext());
         
@@ -90,11 +90,9 @@ public class Route extends Fragment {
 					_wayPointsList.add(_myLocation);
 					_isStartSet = true;
 					
-					_routeId = dbLogic.AddRoute(_myLocation.latitude, _myLocation.longitude);	
+					_routeId = dbLogic.AddRoute(_myLocation.latitude, _myLocation.longitude);						
+					Toast.makeText(_rootView.getContext(), "Starting Route...", Toast.LENGTH_SHORT).show();	
 					
-					Toast.makeText(_rootView.getContext(), "Starting Route...", Toast.LENGTH_SHORT).show();					
-									
-										
 				}else{
 					Toast.makeText(_rootView.getContext(), "Calculating Route...", Toast.LENGTH_SHORT).show();
 				}				
@@ -130,33 +128,12 @@ public class Route extends Fragment {
 					PolylineOptions po = new PolylineOptions();
 					po.addAll(_wayPointsList);
 					po.width(4).color(Color.BLUE);
-					Polyline line = _map.addPolyline(po);	
+					_map.addPolyline(po);	
 					
-					dbLogic.UpdateRoute(_routeId, _myLocation.latitude, _myLocation.longitude);					
-					Toast.makeText(_rootView.getContext(), "Ending Route...", Toast.LENGTH_SHORT).show();
-				}				
-			}
-		});
-        
-        //initialization and onClick listener for the save button
-        _saveButton = (ImageButton) _rootView.findViewById(R.id.save_button);
-        _saveButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				
-				String getRouteName = _routeName.getText().toString();
-				
-				//validating before save the route
-				if(_wayPointsList.isEmpty()){
-					Toast.makeText(_rootView.getContext(), "No Route Specified", Toast.LENGTH_SHORT).show();
-				}else if(_wayPointsList.size() == 1){
-					Toast.makeText(_rootView.getContext(), "Route End Point Required", Toast.LENGTH_SHORT).show();
-				}else if(TextUtils.isEmpty(getRouteName.trim())){
-					Toast.makeText(_rootView.getContext(), "Route Name Required", Toast.LENGTH_SHORT).show();
-				}else{					
-					dbLogic.SaveRoute(_routeId, getRouteName);					
-					Toast.makeText(_rootView.getContext(), "Route Saved", Toast.LENGTH_LONG).show();
+					dbLogic.UpdateRoute(_routeId, _myLocation.latitude, _myLocation.longitude);
+					
+					//create and show alert dialog for save the route
+					createSaveRouteDialog();
 				}				
 			}
 		});
@@ -217,26 +194,103 @@ public class Route extends Fragment {
 
         private long mLastEventTime = 0;        
 
-        @Override
+        @SuppressWarnings("static-access")
+		@Override
             public void onLocationChanged(Location location) {
-                double delayBtnEvents = (System.nanoTime()- mLastEventTime )/(1000000000.0);
+               
+        	/*double delayBtnEvents = (System.nanoTime()- mLastEventTime )/(1000000000.0);
                 mLastEventTime = System.nanoTime();
 
                 //Sampling rate is the frequency at which updates are received
                 String samplingRate = (new DecimalFormat("0.0000").format(1/delayBtnEvents));     
 
                 float speed = (float) (location.getSpeed() * 3.6);  // Converting m/s to Km/hr
-                _speedTextView.setText(speed + " kmph" + ", " + samplingRate + " Hz"); //Updating UI 
+                _speedTextView.setText(speed + " kmph" + ", " + samplingRate + " Hz"); //Updating UI */
+            
+        	   _speedTextView.setText("Distance: " + routeDistance);
+        	
+                _myLocation = new LatLng(location.getLatitude(), location.getLongitude());
                 
-                _myLocation = new LatLng(location.getLatitude(),
-                        location.getLongitude());
+                float[] distance = new float[1]; 
+                double lastLatDistance;
+                double lastLngDistance;
+                double actualLatDistance;
+                double actulLngDistance;
                 
                 //insert way points to the list while moving on the road 
-                if(!_wayPointsList.isEmpty() && _routeId != -1){
+                if(!_wayPointsList.isEmpty() && _routeId != -1){  
+                	
+                	lastLatDistance = _wayPointsList.get(_wayPointsList.size()-1).latitude;
+                	lastLngDistance = _wayPointsList.get(_wayPointsList.size()-1).longitude;                	
+                	actualLatDistance = _myLocation.latitude;
+                	actulLngDistance = _myLocation.longitude;                	
+                	location.distanceBetween(lastLatDistance, lastLngDistance, actualLatDistance, actulLngDistance, distance);
+                	
+                	routeDistance = routeDistance + distance[0];
+                	
                 	_wayPointsList.add(_myLocation);
                 	dbLogic.AddWayPoint(_routeId, 0, _myLocation.latitude, _myLocation.longitude);
                 }
 				
         }
     };   
+    
+    //function to create a alert dialog to input the route name and then save the route
+    private void createSaveRouteDialog(){
+    	// get save_route view
+    	LayoutInflater layoutInflater = LayoutInflater.from(_rootView.getContext());
+    	View promptView = layoutInflater.inflate(R.layout.save_route, null);
+    	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(_rootView.getContext());
+    	
+    	_routeName = (EditText) promptView.findViewById(R.id.route_name);
+    	
+    	// set save_route.xml to be the layout file of the alertdialog builder
+    	alertDialogBuilder.setView(promptView);    	    	
+    	
+    	// setup a dialog window
+    	alertDialogBuilder
+			.setTitle("Save Route")
+			.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+	    		public void onClick(DialogInterface dialog, int id) {
+	    			//this method is going to be override later    			
+	    		}
+	    	}).setNegativeButton("Cancel",new DialogInterface.OnClickListener() {			    	
+	    		public void onClick(DialogInterface dialog, int id) {	    				    		
+	    			dbLogic.DeleteRoute(_routeId);	    			
+	    			setDefaultValues();	    			
+	    			dialog.cancel();
+	    		}
+	    	});
+    	
+    	// create the save route alert dialog
+    	final AlertDialog alertSaveRoute = alertDialogBuilder.create();
+    	alertSaveRoute.show();
+    	
+    	alertSaveRoute.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {			
+			@Override
+			public void onClick(View arg0) {
+				String getRouteName = _routeName.getText().toString();
+	    		
+    			//validating before save the route
+				if(TextUtils.isEmpty(getRouteName.trim())){
+					Toast.makeText(_rootView.getContext(), "Route Name Required", Toast.LENGTH_SHORT).show();
+				}else{					
+					dbLogic.SaveRoute(_routeId, getRouteName);						
+					setDefaultValues();					
+					Toast.makeText(_rootView.getContext(), "Route Saved", Toast.LENGTH_LONG).show();
+					alertSaveRoute.dismiss();
+				}
+				
+			}
+		});
+    }
+    
+    //function to set the default values of some variables
+    private void setDefaultValues(){
+    	_isStartSet = false;
+		_isStopSet = false;
+		_wayPointsList.clear();
+		_map.clear();
+		_routeId = -1;
+    }
 }
