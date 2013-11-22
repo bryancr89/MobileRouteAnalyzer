@@ -33,4 +33,8 @@ public class Logic {
 		_repository.AddWayPoint(routeId, count, lat, lng);
 	}
 	
+	public void DeleteRoute(long routeId){
+		_repository.DeleteWayPoints(routeId);
+		_repository.DeleteRoute(routeId);
+	}
 }

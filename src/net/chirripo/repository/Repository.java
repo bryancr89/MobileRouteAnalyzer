@@ -6,6 +6,7 @@ import java.util.List;
 import net.chirripo.entities.*;
 import net.chirripo.models.*;
 import net.chirripo.entities.DaoMaster.DevOpenHelper;
+import net.chirripo.entities.WayPoints;
 import net.chirripo.entities.WayPointsDao.Properties;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -76,6 +77,20 @@ public class Repository implements IRepository {
 			.orderDesc(Properties.Count).limit(1)
 			.unique()
 			.getCount();
+	}
+	
+	public void DeleteRoute(long routeId){
+		_routesDao.deleteByKey(routeId);
+	}
+	
+	public void DeleteWayPoints(long routeId){
+		List<WayPoints> waypoints =  _waypointsDao.queryBuilder()
+				.where(Properties.RouteId.eq(routeId))
+				.list();
+			
+		for(WayPoints i: waypoints){
+			_waypointsDao.deleteByKey(i.getId());
+		}
 	}
 	
 	//Private methods

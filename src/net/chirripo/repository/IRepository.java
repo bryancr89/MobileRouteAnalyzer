@@ -19,4 +19,7 @@ public interface IRepository {
 	
 	int GetRunTimesRoute(long routeId);
 	
+	void DeleteRoute(long routeId);
+	
+	void DeleteWayPoints(long routeId);	
 }
