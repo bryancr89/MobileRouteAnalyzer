@@ -1,6 +1,5 @@
 package net.chirripo.tabs;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +10,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -46,7 +47,7 @@ public class Route extends Fragment {
 	private LocationClient _locationClient;
 	private float _zoom = 16;
 	private View _rootView;
-	private TextView _speedTextView;
+	private TextView _distanceTextView;
 	private ImageButton _startButton;
 	private ImageButton _stopButton;	
 	private EditText _routeName;
@@ -56,7 +57,9 @@ public class Route extends Fragment {
 	private boolean _isStartSet = false;
 	private boolean _isStopSet = false;
 	private long _routeId = -1;
-	private Double routeDistance = 0.0;
+	private Double _routeDistance = 0.0;
+	private Double _distanceKilometers = 0.0;
+	private Chronometer _routeChronometer;
 	
 	Logic dbLogic;
 	
@@ -65,7 +68,8 @@ public class Route extends Fragment {
             Bundle savedInstanceState) {
  
         _rootView = inflater.inflate(R.layout.route, container, false);
-        _speedTextView = (TextView) _rootView.findViewById(R.id.show_speed);
+        _distanceTextView = (TextView) _rootView.findViewById(R.id.show_distance);
+        _routeChronometer = (Chronometer) _rootView.findViewById(R.id.time_chronometer);
         
         dbLogic = new Logic(_rootView.getContext());
         
@@ -85,6 +89,10 @@ public class Route extends Fragment {
 			    	.position(_myLocation)
 			    	.title("Start Point")
 			    	.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+					
+					//star the chronometer to log the route total time
+					_routeChronometer.setBase(SystemClock.elapsedRealtime());
+					_routeChronometer.start();
 					
 					//insert first way point to the list
 					_wayPointsList.add(_myLocation);
@@ -119,6 +127,9 @@ public class Route extends Fragment {
 			    	.position(_myLocation)
 			    	.title("End Point")
 			    	.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+					
+					//stop the chronometer
+					_routeChronometer.stop();
 					
 					//insert last way point to the list
 					_wayPointsList.add(_myLocation);
@@ -191,24 +202,10 @@ public class Route extends Fragment {
     
     //location listener to show information when the location changes
     private LocationListener mLocationListener = new LocationListener() {
-
-        private long mLastEventTime = 0;        
-
-        @SuppressWarnings("static-access")
+        
 		@Override
             public void onLocationChanged(Location location) {
-               
-        	/*double delayBtnEvents = (System.nanoTime()- mLastEventTime )/(1000000000.0);
-                mLastEventTime = System.nanoTime();
-
-                //Sampling rate is the frequency at which updates are received
-                String samplingRate = (new DecimalFormat("0.0000").format(1/delayBtnEvents));     
-
-                float speed = (float) (location.getSpeed() * 3.6);  // Converting m/s to Km/hr
-                _speedTextView.setText(speed + " kmph" + ", " + samplingRate + " Hz"); //Updating UI */
             
-        	   _speedTextView.setText("Distance: " + routeDistance);
-        	
                 _myLocation = new LatLng(location.getLatitude(), location.getLongitude());
                 
                 float[] distance = new float[1]; 
@@ -224,9 +221,15 @@ public class Route extends Fragment {
                 	lastLngDistance = _wayPointsList.get(_wayPointsList.size()-1).longitude;                	
                 	actualLatDistance = _myLocation.latitude;
                 	actulLngDistance = _myLocation.longitude;                	
-                	location.distanceBetween(lastLatDistance, lastLngDistance, actualLatDistance, actulLngDistance, distance);
+                	Location.distanceBetween(lastLatDistance, lastLngDistance, actualLatDistance, actulLngDistance, distance);
                 	
-                	routeDistance = routeDistance + distance[0];
+                	_routeDistance = _routeDistance + distance[0];
+                	
+                	_distanceKilometers = _routeDistance / 1000;     
+                	
+                	String showDistance = String.format("%.8f", _distanceKilometers);
+                	
+    				_distanceTextView.setText(showDistance + " km");
                 	
                 	_wayPointsList.add(_myLocation);
                 	dbLogic.AddWayPoint(_routeId, 0, _myLocation.latitude, _myLocation.longitude);
@@ -292,5 +295,7 @@ public class Route extends Fragment {
 		_wayPointsList.clear();
 		_map.clear();
 		_routeId = -1;
+		_distanceTextView.setText("0.00 km");
+		_routeChronometer.setBase(SystemClock.elapsedRealtime());
     }
 }

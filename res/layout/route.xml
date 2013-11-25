@@ -14,23 +14,6 @@
         android:layout_margin="10dp"
         class="com.google.android.gms.maps.SupportMapFragment" />
 
-    <TextView
-        android:id="@+id/show_speed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/map"
-        android:layout_below="@+id/map"
-        android:text="@string/show_speed" />
-
-    <ImageButton
-        android:id="@+id/start_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/show_speed"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="14dp"
-        android:src="@drawable/ic_action_play"/>
-
     <ImageButton
         android:id="@+id/stop_button"
         android:layout_width="wrap_content"
@@ -39,5 +22,49 @@
         android:layout_marginLeft="14dp"
         android:layout_toRightOf="@+id/start_button"
         android:src="@drawable/ic_action_stop" />
+
+    <Chronometer
+        android:id="@+id/time_chronometer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/show_distance"
+        android:layout_below="@+id/show_distance"
+        android:layout_marginTop="15dp"
+        android:text="Chronometer" />
+
+    <ImageButton
+        android:id="@+id/start_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/map"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_action_play" />
+
+    <TextView
+        android:id="@+id/time_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/time_chronometer"
+        android:layout_alignBottom="@+id/time_chronometer"
+        android:layout_alignLeft="@+id/start_button"
+        android:text="@string/show_time" />
+
+    <TextView
+        android:id="@+id/distance_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/map"
+        android:layout_below="@+id/map"
+        android:text="@string/show_distance" />
+
+    <TextView
+        android:id="@+id/show_distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/distance_label"
+        android:layout_alignBottom="@+id/distance_label"
+        android:layout_alignLeft="@+id/stop_button"
+        android:text="@string/default_distance" />
      
 </RelativeLayout>
