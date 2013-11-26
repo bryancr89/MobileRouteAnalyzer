@@ -30,7 +30,8 @@ public class WayPointsDao extends AbstractDao<WayPoints, Long> {
         public final static Property Count = new Property(1, int.class, "count", false, "COUNT");
         public final static Property Lat = new Property(2, double.class, "lat", false, "LAT");
         public final static Property Lng = new Property(3, double.class, "lng", false, "LNG");
-        public final static Property RouteId = new Property(4, long.class, "routeId", false, "ROUTE_ID");
+        public final static Property Distance = new Property(4, double.class, "distance", false, "DISTANCE");
+        public final static Property RouteId = new Property(5, long.class, "routeId", false, "ROUTE_ID");
     };
 
     private Query<WayPoints> routes_OrdersQuery;
@@ -51,7 +52,8 @@ public class WayPointsDao extends AbstractDao<WayPoints, Long> {
                 "'COUNT' INTEGER NOT NULL ," + // 1: count
                 "'LAT' REAL NOT NULL ," + // 2: lat
                 "'LNG' REAL NOT NULL ," + // 3: lng
-                "'ROUTE_ID' INTEGER NOT NULL );"); // 4: routeId
+                "'DISTANCE' REAL NOT NULL ," + // 4: distance
+                "'ROUTE_ID' INTEGER NOT NULL );"); // 5: routeId
     }
 
     /** Drops the underlying database table. */
@@ -72,7 +74,8 @@ public class WayPointsDao extends AbstractDao<WayPoints, Long> {
         stmt.bindLong(2, entity.getCount());
         stmt.bindDouble(3, entity.getLat());
         stmt.bindDouble(4, entity.getLng());
-        stmt.bindLong(5, entity.getRouteId());
+        stmt.bindDouble(5, entity.getDistance());
+        stmt.bindLong(6, entity.getRouteId());
     }
 
     /** @inheritdoc */
@@ -89,7 +92,8 @@ public class WayPointsDao extends AbstractDao<WayPoints, Long> {
             cursor.getInt(offset + 1), // count
             cursor.getDouble(offset + 2), // lat
             cursor.getDouble(offset + 3), // lng
-            cursor.getLong(offset + 4) // routeId
+            cursor.getDouble(offset + 4), // distance
+            cursor.getLong(offset + 5) // routeId
         );
         return entity;
     }
@@ -101,7 +105,8 @@ public class WayPointsDao extends AbstractDao<WayPoints, Long> {
         entity.setCount(cursor.getInt(offset + 1));
         entity.setLat(cursor.getDouble(offset + 2));
         entity.setLng(cursor.getDouble(offset + 3));
-        entity.setRouteId(cursor.getLong(offset + 4));
+        entity.setDistance(cursor.getDouble(offset + 4));
+        entity.setRouteId(cursor.getLong(offset + 5));
      }
     
     /** @inheritdoc */

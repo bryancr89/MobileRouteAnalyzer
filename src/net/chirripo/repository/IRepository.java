@@ -11,9 +11,9 @@ public interface IRepository {
 	
 	void UpdateRoute(long routeId, double latStop, double lngStop);
 	
-	void SaveRoute(long routeId, String name);
+	void SaveRoute(long routeId, String name, double duration, double distance);
 	
-	void AddWayPoint(long routeId, int count, double lat, double lng);
+	void AddWayPoint(long routeId, int count, double lat, double lng, double distance);
 	
 	List<RouteModel>GetListRoutes();
 	
@@ -21,5 +21,7 @@ public interface IRepository {
 	
 	void DeleteRoute(long routeId);
 	
-	void DeleteWayPoints(long routeId);	
+	void DeleteWayPoints(long routeId);
+	
+	int GetCountRouteRuns(long routeId);
 }

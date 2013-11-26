@@ -10,6 +10,7 @@ public class WayPoints {
     private int count;
     private double lat;
     private double lng;
+    private double distance;
     private long routeId;
 
     public WayPoints() {
@@ -19,11 +20,12 @@ public class WayPoints {
         this.id = id;
     }
 
-    public WayPoints(Long id, int count, double lat, double lng, long routeId) {
+    public WayPoints(Long id, int count, double lat, double lng, double distance, long routeId) {
         this.id = id;
         this.count = count;
         this.lat = lat;
         this.lng = lng;
+        this.distance = distance;
         this.routeId = routeId;
     }
 
@@ -57,6 +59,14 @@ public class WayPoints {
 
     public void setLng(double lng) {
         this.lng = lng;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 
     public long getRouteId() {

@@ -29,6 +29,8 @@ public class RoutesDao extends AbstractDao<Routes, Long> {
         public final static Property LngStart = new Property(3, double.class, "lngStart", false, "LNG_START");
         public final static Property LatStop = new Property(4, double.class, "latStop", false, "LAT_STOP");
         public final static Property LngStop = new Property(5, double.class, "lngStop", false, "LNG_STOP");
+        public final static Property Distance = new Property(6, double.class, "distance", false, "DISTANCE");
+        public final static Property Duration = new Property(7, double.class, "duration", false, "DURATION");
     };
 
     private DaoSession daoSession;
@@ -52,7 +54,9 @@ public class RoutesDao extends AbstractDao<Routes, Long> {
                 "'LAT_START' REAL NOT NULL ," + // 2: latStart
                 "'LNG_START' REAL NOT NULL ," + // 3: lngStart
                 "'LAT_STOP' REAL NOT NULL ," + // 4: latStop
-                "'LNG_STOP' REAL NOT NULL );"); // 5: lngStop
+                "'LNG_STOP' REAL NOT NULL ," + // 5: lngStop
+                "'DISTANCE' REAL NOT NULL ," + // 6: distance
+                "'DURATION' REAL NOT NULL );"); // 7: duration
     }
 
     /** Drops the underlying database table. */
@@ -75,6 +79,8 @@ public class RoutesDao extends AbstractDao<Routes, Long> {
         stmt.bindDouble(4, entity.getLngStart());
         stmt.bindDouble(5, entity.getLatStop());
         stmt.bindDouble(6, entity.getLngStop());
+        stmt.bindDouble(7, entity.getDistance());
+        stmt.bindDouble(8, entity.getDuration());
     }
 
     @Override
@@ -98,7 +104,9 @@ public class RoutesDao extends AbstractDao<Routes, Long> {
             cursor.getDouble(offset + 2), // latStart
             cursor.getDouble(offset + 3), // lngStart
             cursor.getDouble(offset + 4), // latStop
-            cursor.getDouble(offset + 5) // lngStop
+            cursor.getDouble(offset + 5), // lngStop
+            cursor.getDouble(offset + 6), // distance
+            cursor.getDouble(offset + 7) // duration
         );
         return entity;
     }
@@ -112,6 +120,8 @@ public class RoutesDao extends AbstractDao<Routes, Long> {
         entity.setLngStart(cursor.getDouble(offset + 3));
         entity.setLatStop(cursor.getDouble(offset + 4));
         entity.setLngStop(cursor.getDouble(offset + 5));
+        entity.setDistance(cursor.getDouble(offset + 6));
+        entity.setDuration(cursor.getDouble(offset + 7));
      }
     
     /** @inheritdoc */

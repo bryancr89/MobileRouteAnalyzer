@@ -17,6 +17,8 @@ public class Routes {
     private double lngStart;
     private double latStop;
     private double lngStop;
+    private double distance;
+    private double duration;
 
     /** Used to resolve relations */
     private transient DaoSession daoSession;
@@ -33,13 +35,15 @@ public class Routes {
         this.id = id;
     }
 
-    public Routes(Long id, String name, double latStart, double lngStart, double latStop, double lngStop) {
+    public Routes(Long id, String name, double latStart, double lngStart, double latStop, double lngStop, double distance, double duration) {
         this.id = id;
         this.name = name;
         this.latStart = latStart;
         this.lngStart = lngStart;
         this.latStop = latStop;
         this.lngStop = lngStop;
+        this.distance = distance;
+        this.duration = duration;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -96,6 +100,22 @@ public class Routes {
 
     public void setLngStop(double lngStop) {
         this.lngStop = lngStop;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+
+    public double getDuration() {
+        return duration;
+    }
+
+    public void setDuration(double duration) {
+        this.duration = duration;
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */

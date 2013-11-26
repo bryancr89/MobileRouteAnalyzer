@@ -39,7 +39,7 @@ public class Repository implements IRepository {
 	}
 	
 	public long AddRoute(double latStart, double lngStart){
-		Routes route= new Routes(null, "", latStart, lngStart, 0, 0);
+		Routes route= new Routes(null, "", latStart, lngStart, 0, 0, 0, 0);
         _routesDao.insert(route);
 		return route.getId();
 	}
@@ -51,14 +51,16 @@ public class Repository implements IRepository {
 		_routesDao.update(route);
 	}
 	
-	public void SaveRoute(long routeId, String name){
+	public void SaveRoute(long routeId, String name, double duration, double distance){
 		Routes route = GetRoute(routeId);
 		route.setName(name);
+		route.setDistance(distance);
+		route.setDuration(duration);
 		_routesDao.update(route);
 	}
 	
-	public void AddWayPoint(long routeId, int count, double lat, double lng){
-		WayPoints wayPoint = new WayPoints(null, count, lat, lng, routeId);
+	public void AddWayPoint(long routeId, int count, double lat, double lng, double distance){
+		WayPoints wayPoint = new WayPoints(null, count, lat, lng, distance, routeId);
 		_waypointsDao.insert(wayPoint);
 	}
 	
@@ -91,6 +93,12 @@ public class Repository implements IRepository {
 		for(WayPoints i: waypoints){
 			_waypointsDao.deleteByKey(i.getId());
 		}
+	}
+
+	public int GetCountRouteRuns(long routeId){
+		WayPoints element = _waypointsDao.queryBuilder().where(Properties.RouteId.eq(routeId)).orderDesc(Properties.Count).unique();
+		
+		return element != null ?  element.getCount() + 1 : 0;
 	}
 	
 	//Private methods

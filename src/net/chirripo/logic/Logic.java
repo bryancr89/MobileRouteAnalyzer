@@ -25,16 +25,20 @@ public class Logic {
 		_repository.UpdateRoute(routeId, latStop, lngStop);
 	}
 	
-	public void SaveRoute(long routeId, String name){
-		_repository.SaveRoute(routeId, name);
+	public void SaveRoute(long routeId, String name, double duration, double distance){
+		_repository.SaveRoute(routeId, name, duration, distance);
 	}
 	
-	public void AddWayPoint(long routeId, int count, double lat, double lng){
-		_repository.AddWayPoint(routeId, count, lat, lng);
+	public void AddWayPoint(long routeId, int count, double lat, double lng, double distance){
+		_repository.AddWayPoint(routeId, count, lat, lng, distance);
 	}
 	
 	public void DeleteRoute(long routeId){
 		_repository.DeleteWayPoints(routeId);
 		_repository.DeleteRoute(routeId);
+	}
+	
+	public int GetCountRouteRuns(long routeId){
+		return _repository.GetCountRouteRuns(routeId);
 	}
 }

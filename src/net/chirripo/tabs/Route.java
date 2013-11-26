@@ -57,6 +57,7 @@ public class Route extends Fragment {
 	private boolean _isStartSet = false;
 	private boolean _isStopSet = false;
 	private long _routeId = -1;
+	private int _countRouteRuns = 0;
 	private Double _routeDistance = 0.0;
 	private Double _distanceKilometers = 0.0;
 	private Chronometer _routeChronometer;
@@ -98,7 +99,8 @@ public class Route extends Fragment {
 					_wayPointsList.add(_myLocation);
 					_isStartSet = true;
 					
-					_routeId = dbLogic.AddRoute(_myLocation.latitude, _myLocation.longitude);						
+					_routeId = dbLogic.AddRoute(_myLocation.latitude, _myLocation.longitude);
+					_countRouteRuns = dbLogic.GetCountRouteRuns(_routeId);
 					Toast.makeText(_rootView.getContext(), "Starting Route...", Toast.LENGTH_SHORT).show();	
 					
 				}else{
@@ -232,7 +234,7 @@ public class Route extends Fragment {
     				_distanceTextView.setText(showDistance + " km");
                 	
                 	_wayPointsList.add(_myLocation);
-                	dbLogic.AddWayPoint(_routeId, 0, _myLocation.latitude, _myLocation.longitude);
+                	dbLogic.AddWayPoint(_routeId, _countRouteRuns, _myLocation.latitude, _myLocation.longitude, _distanceKilometers);
                 }
 				
         }
@@ -278,7 +280,7 @@ public class Route extends Fragment {
 				if(TextUtils.isEmpty(getRouteName.trim())){
 					Toast.makeText(_rootView.getContext(), "Route Name Required", Toast.LENGTH_SHORT).show();
 				}else{					
-					dbLogic.SaveRoute(_routeId, getRouteName);						
+					dbLogic.SaveRoute(_routeId, getRouteName, 0, 0);						
 					setDefaultValues();					
 					Toast.makeText(_rootView.getContext(), "Route Saved", Toast.LENGTH_LONG).show();
 					alertSaveRoute.dismiss();
