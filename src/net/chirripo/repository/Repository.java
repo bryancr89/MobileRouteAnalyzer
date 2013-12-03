@@ -158,6 +158,21 @@ public class Repository implements IRepository {
 		return fasterRun != null ? fasterRun.getDuration() : 0;
 	}
 	
+	public double GetAvgRoute(long routeId){
+		double avg = 0;
+		List<RunRoutes> runs = _runRoutesDao.queryBuilder()
+				.where(net.chirripo.entities.RunRoutesDao.Properties.RouteId.eq(routeId))
+				.list();
+		
+		if(runs != null &&  runs.size() != 0){
+			for(RunRoutes i: runs){
+				avg += i.getDuration();
+			}
+			avg = avg / runs.size();
+		}
+		return avg;
+	}
+	
 	//Private methods
 	private Routes GetRoute(long routeId) {
 		return _routesDao.queryBuilder().where(net.chirripo.entities.RunRoutesDao.Properties.Id.eq(routeId)).unique();

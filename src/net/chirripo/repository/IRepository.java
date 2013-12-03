@@ -32,4 +32,7 @@ public interface IRepository {
 	double GetSlowerRunDuration(long routeId);
 	
 	double GetFasterRunDuration(long routeId);
+	
+	double GetAvgRoute(long routeId);
 }
+

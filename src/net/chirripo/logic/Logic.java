@@ -57,4 +57,8 @@ public class Logic {
 	public double GetFasterRunDuration(long routeId){
 		return _repository.GetFasterRunDuration(routeId);
 	}
+	
+	public double GetAvgRoute(long routeId){
+		return _repository.GetAvgRoute(routeId);
+	}
 }
