@@ -1,6 +1,7 @@
 package net.chirripo.repository;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import net.chirripo.entities.DaoMaster;
@@ -65,7 +66,7 @@ public class Repository implements IRepository {
 		route.setName(name);
 		
 		int count = GetCountRouteRuns(routeId);
-		RunRoutes runRoute = new RunRoutes(null,distance, duration, count, routeId);
+		RunRoutes runRoute = new RunRoutes(null,distance, duration, count, new Date(), routeId);
 		_runRoutesDao.insert(runRoute);
 		_routesDao.update(route);
 	}
@@ -167,6 +168,7 @@ public class Repository implements IRepository {
 		if(runRoute != null) {
 			result.setDistance(runRoute.getDistance());
 			result.setDuration(runRoute.getDuration());
+			result.setRunDate(runRoute.getRunDate());
 		}
 		if(route != null){
 			result.setId(route.getId());

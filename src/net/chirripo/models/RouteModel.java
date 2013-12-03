@@ -1,5 +1,6 @@
 package net.chirripo.models;
 
+import java.util.Date;
 import java.util.List;
 
 public class RouteModel {
@@ -11,6 +12,7 @@ public class RouteModel {
 	private long _lngStop;;
 	private double _distance;
 	private double _duration;
+	private Date _runDate;
 	private List<WaypointsModel> _waypoints;
 
 	public RouteModel() { }
@@ -21,9 +23,10 @@ public class RouteModel {
 		this.setName(name);
 	}
 	
-	public RouteModel(long id, String name, long latStart, long lngStart, long latStop, long lngStop, List<WaypointsModel> waypoints) {
+	public RouteModel(long id, String name, Date runDate, long latStart, long lngStart, long latStop, long lngStop, List<WaypointsModel> waypoints) {
 		this.setId(id);
 		this.setName(name);
+		this.setRunDate(runDate);
 		this.setLatStart(latStart);
 		this.setLngStart(lngStart);
 		this.setLatStop(latStop);
@@ -101,5 +104,13 @@ public class RouteModel {
 
 	public void setDuration(double _duration) {
 		this._duration = _duration;
+	}
+
+	public Date getRunDate() {
+		return _runDate;
+	}
+
+	public void setRunDate(Date date) {
+		this._runDate = date;
 	}
 }
