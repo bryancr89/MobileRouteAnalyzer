@@ -7,7 +7,7 @@ import net.chirripo.models.RouteModel;
 import net.chirripo.list.RouteList;
 import net.chirripo.logic.Logic;
 import android.content.Context;
-import android.content.DialogInterface.OnShowListener;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -41,8 +41,11 @@ public class MyRoutes extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                Toast.makeText(ctx, "You Clicked at " + routes.get(position).getName()  + " " + routes.get(position).getId() , Toast.LENGTH_SHORT).show();
-
+                //Toast.makeText(ctx, "You Clicked at " + routes.get(position).getName()  + " " + routes.get(position).getId() , Toast.LENGTH_SHORT).show();
+            	Intent runRoute = new Intent(ctx, RunningRoute.class);
+            	runRoute.putExtra("routeName", routes.get(position).getName().toString());
+            	runRoute.putExtra("routeId", routes.get(position).getId());
+                startActivity(runRoute);	                
             }
         });
         return rootView;
