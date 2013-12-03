@@ -7,6 +7,7 @@ import net.chirripo.models.RouteModel;
 import net.chirripo.list.RouteList;
 import net.chirripo.logic.Logic;
 import android.content.Context;
+import android.content.DialogInterface.OnShowListener;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -21,12 +22,14 @@ public class MyRoutes extends Fragment {
 	
 	ListView list;
 	private Logic _logic;
-    
+	View rootView;
+	Context ctx;
+	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.my_routes, container, false);
-        final Context ctx = rootView.getContext();
+        rootView = inflater.inflate(R.layout.my_routes, container, false);
+        ctx = rootView.getContext();
         _logic = new Logic(ctx);
         final List<RouteModel> routes =_logic.GetListRoutes();
         RouteList adapter = new RouteList(ctx, routes);
@@ -38,10 +41,11 @@ public class MyRoutes extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                Toast.makeText(ctx, "You Clicked at " + routes.get(position).name  + " " + routes.get(position).id , Toast.LENGTH_SHORT).show();
+                Toast.makeText(ctx, "You Clicked at " + routes.get(position).getName()  + " " + routes.get(position).getId() , Toast.LENGTH_SHORT).show();
 
             }
         });
         return rootView;
     }
+    
 }

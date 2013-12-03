@@ -27,14 +27,15 @@ public class WayPointsDao extends AbstractDao<WayPoints, Long> {
     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property Count = new Property(1, int.class, "count", false, "COUNT");
-        public final static Property Lat = new Property(2, double.class, "lat", false, "LAT");
-        public final static Property Lng = new Property(3, double.class, "lng", false, "LNG");
-        public final static Property Distance = new Property(4, double.class, "distance", false, "DISTANCE");
-        public final static Property RouteId = new Property(5, long.class, "routeId", false, "ROUTE_ID");
+        public final static Property Lat = new Property(1, double.class, "lat", false, "LAT");
+        public final static Property Lng = new Property(2, double.class, "lng", false, "LNG");
+        public final static Property Distance = new Property(3, double.class, "distance", false, "DISTANCE");
+        public final static Property RouteId = new Property(4, long.class, "routeId", false, "ROUTE_ID");
+        public final static Property Count = new Property(5, long.class, "count", false, "COUNT");
     };
 
-    private Query<WayPoints> routes_OrdersQuery;
+    private Query<WayPoints> routes_Fk_route_waypointsQuery;
+    private Query<WayPoints> routes_Fk_runRoute_waypointsQuery;
 
     public WayPointsDao(DaoConfig config) {
         super(config);
@@ -49,11 +50,11 @@ public class WayPointsDao extends AbstractDao<WayPoints, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'WAY_POINTS' (" + //
                 "'_id' INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
-                "'COUNT' INTEGER NOT NULL ," + // 1: count
-                "'LAT' REAL NOT NULL ," + // 2: lat
-                "'LNG' REAL NOT NULL ," + // 3: lng
-                "'DISTANCE' REAL NOT NULL ," + // 4: distance
-                "'ROUTE_ID' INTEGER NOT NULL );"); // 5: routeId
+                "'LAT' REAL NOT NULL ," + // 1: lat
+                "'LNG' REAL NOT NULL ," + // 2: lng
+                "'DISTANCE' REAL NOT NULL ," + // 3: distance
+                "'ROUTE_ID' INTEGER NOT NULL ," + // 4: routeId
+                "'COUNT' INTEGER NOT NULL );"); // 5: count
     }
 
     /** Drops the underlying database table. */
@@ -71,11 +72,11 @@ public class WayPointsDao extends AbstractDao<WayPoints, Long> {
         if (id != null) {
             stmt.bindLong(1, id);
         }
-        stmt.bindLong(2, entity.getCount());
-        stmt.bindDouble(3, entity.getLat());
-        stmt.bindDouble(4, entity.getLng());
-        stmt.bindDouble(5, entity.getDistance());
-        stmt.bindLong(6, entity.getRouteId());
+        stmt.bindDouble(2, entity.getLat());
+        stmt.bindDouble(3, entity.getLng());
+        stmt.bindDouble(4, entity.getDistance());
+        stmt.bindLong(5, entity.getRouteId());
+        stmt.bindLong(6, entity.getCount());
     }
 
     /** @inheritdoc */
@@ -89,11 +90,11 @@ public class WayPointsDao extends AbstractDao<WayPoints, Long> {
     public WayPoints readEntity(Cursor cursor, int offset) {
         WayPoints entity = new WayPoints( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.getInt(offset + 1), // count
-            cursor.getDouble(offset + 2), // lat
-            cursor.getDouble(offset + 3), // lng
-            cursor.getDouble(offset + 4), // distance
-            cursor.getLong(offset + 5) // routeId
+            cursor.getDouble(offset + 1), // lat
+            cursor.getDouble(offset + 2), // lng
+            cursor.getDouble(offset + 3), // distance
+            cursor.getLong(offset + 4), // routeId
+            cursor.getLong(offset + 5) // count
         );
         return entity;
     }
@@ -102,11 +103,11 @@ public class WayPointsDao extends AbstractDao<WayPoints, Long> {
     @Override
     public void readEntity(Cursor cursor, WayPoints entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setCount(cursor.getInt(offset + 1));
-        entity.setLat(cursor.getDouble(offset + 2));
-        entity.setLng(cursor.getDouble(offset + 3));
-        entity.setDistance(cursor.getDouble(offset + 4));
-        entity.setRouteId(cursor.getLong(offset + 5));
+        entity.setLat(cursor.getDouble(offset + 1));
+        entity.setLng(cursor.getDouble(offset + 2));
+        entity.setDistance(cursor.getDouble(offset + 3));
+        entity.setRouteId(cursor.getLong(offset + 4));
+        entity.setCount(cursor.getLong(offset + 5));
      }
     
     /** @inheritdoc */
@@ -132,17 +133,31 @@ public class WayPointsDao extends AbstractDao<WayPoints, Long> {
         return true;
     }
     
-    /** Internal query to resolve the "orders" to-many relationship of Routes. */
-    public List<WayPoints> _queryRoutes_Orders(long routeId) {
+    /** Internal query to resolve the "fk_route_waypoints" to-many relationship of Routes. */
+    public List<WayPoints> _queryRoutes_Fk_route_waypoints(long routeId) {
         synchronized (this) {
-            if (routes_OrdersQuery == null) {
+            if (routes_Fk_route_waypointsQuery == null) {
                 QueryBuilder<WayPoints> queryBuilder = queryBuilder();
                 queryBuilder.where(Properties.RouteId.eq(null));
-                routes_OrdersQuery = queryBuilder.build();
+                routes_Fk_route_waypointsQuery = queryBuilder.build();
             }
         }
-        Query<WayPoints> query = routes_OrdersQuery.forCurrentThread();
+        Query<WayPoints> query = routes_Fk_route_waypointsQuery.forCurrentThread();
         query.setParameter(0, routeId);
+        return query.list();
+    }
+
+    /** Internal query to resolve the "fk_runRoute_waypoints" to-many relationship of Routes. */
+    public List<WayPoints> _queryRoutes_Fk_runRoute_waypoints(long count) {
+        synchronized (this) {
+            if (routes_Fk_runRoute_waypointsQuery == null) {
+                QueryBuilder<WayPoints> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.Count.eq(null));
+                routes_Fk_runRoute_waypointsQuery = queryBuilder.build();
+            }
+        }
+        Query<WayPoints> query = routes_Fk_runRoute_waypointsQuery.forCurrentThread();
+        query.setParameter(0, count);
         return query.list();
     }
 

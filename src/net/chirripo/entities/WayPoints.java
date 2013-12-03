@@ -7,11 +7,11 @@ package net.chirripo.entities;
 public class WayPoints {
 
     private Long id;
-    private int count;
     private double lat;
     private double lng;
     private double distance;
     private long routeId;
+    private long count;
 
     public WayPoints() {
     }
@@ -20,13 +20,13 @@ public class WayPoints {
         this.id = id;
     }
 
-    public WayPoints(Long id, int count, double lat, double lng, double distance, long routeId) {
+    public WayPoints(Long id, double lat, double lng, double distance, long routeId, long count) {
         this.id = id;
-        this.count = count;
         this.lat = lat;
         this.lng = lng;
         this.distance = distance;
         this.routeId = routeId;
+        this.count = count;
     }
 
     public Long getId() {
@@ -35,14 +35,6 @@ public class WayPoints {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public int getCount() {
-        return count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
     }
 
     public double getLat() {
@@ -75,6 +67,14 @@ public class WayPoints {
 
     public void setRouteId(long routeId) {
         this.routeId = routeId;
+    }
+
+    public long getCount() {
+        return count;
+    }
+
+    public void setCount(long count) {
+        this.count = count;
     }
 
 }

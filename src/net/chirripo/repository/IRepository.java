@@ -24,4 +24,12 @@ public interface IRepository {
 	void DeleteWayPoints(long routeId);
 	
 	int GetCountRouteRuns(long routeId);
+	
+	RouteModel GetSlowerRun(long routeId);
+	
+	RouteModel GetFasterRun(long routeId);
+	
+	double GetSlowerRunDuration(long routeId);
+	
+	double GetFasterRunDuration(long routeId);
 }

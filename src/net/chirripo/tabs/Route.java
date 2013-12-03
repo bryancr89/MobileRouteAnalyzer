@@ -2,7 +2,6 @@ package net.chirripo.tabs;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import net.chirripo.logic.Logic;
 import net.chirripo.mobilerouteanalyzer.R;
 import android.app.AlertDialog;
@@ -23,7 +22,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;

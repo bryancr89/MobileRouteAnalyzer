@@ -25,7 +25,7 @@ public class RouteList extends ArrayAdapter<RouteModel> {
 		View rowView= inflater.inflate(R.layout.route_item, null, true);
 		TextView txtTitle = (TextView) rowView.findViewById(R.id.textView1);
 		
-		txtTitle.setText(routes.get(position).name);
+		txtTitle.setText(routes.get(position).getName());
 		
 		return rowView;
 	}

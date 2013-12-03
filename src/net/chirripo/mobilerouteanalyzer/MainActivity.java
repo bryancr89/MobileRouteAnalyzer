@@ -60,13 +60,13 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void onTabReselected(Tab tab, FragmentTransaction ft) {		
+	public void onTabReselected(Tab tab, FragmentTransaction ft) {
+		viewPager.setCurrentItem(tab.getPosition());
 	}
 
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
         viewPager.setCurrentItem(tab.getPosition());
-		
 	}
 
 	@Override

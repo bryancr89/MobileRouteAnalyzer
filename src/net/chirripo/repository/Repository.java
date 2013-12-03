@@ -3,11 +3,18 @@ package net.chirripo.repository;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.chirripo.entities.*;
-import net.chirripo.models.*;
+import net.chirripo.entities.DaoMaster;
 import net.chirripo.entities.DaoMaster.DevOpenHelper;
+import net.chirripo.entities.DaoSession;
+import net.chirripo.entities.Routes;
+import net.chirripo.entities.RoutesDao;
+import net.chirripo.entities.RunRoutes;
+import net.chirripo.entities.RunRoutesDao;
 import net.chirripo.entities.WayPoints;
+import net.chirripo.entities.WayPointsDao;
 import net.chirripo.entities.WayPointsDao.Properties;
+import net.chirripo.models.RouteModel;
+import net.chirripo.models.WaypointsModel;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -17,6 +24,7 @@ public class Repository implements IRepository {
 	private DaoMaster _daoMaster;
 	private DaoSession _daoSession;	
 	private RoutesDao _routesDao;
+	private RunRoutesDao _runRoutesDao;
 	private WayPointsDao _waypointsDao;
 	private Context _ctx;
 		
@@ -35,11 +43,12 @@ public class Repository implements IRepository {
 		
 		//Define instances of the tables.
 		_routesDao = _daoSession.getRoutesDao();
+		_runRoutesDao = _daoSession.getRunRoutesDao();
 		_waypointsDao = _daoSession.getWayPointsDao();
 	}
 	
 	public long AddRoute(double latStart, double lngStart){
-		Routes route= new Routes(null, "", latStart, lngStart, 0, 0, 0, 0);
+		Routes route= new Routes(null, "", latStart, lngStart, 0, 0);
         _routesDao.insert(route);
 		return route.getId();
 	}
@@ -54,13 +63,15 @@ public class Repository implements IRepository {
 	public void SaveRoute(long routeId, String name, double duration, double distance){
 		Routes route = GetRoute(routeId);
 		route.setName(name);
-		route.setDistance(distance);
-		route.setDuration(duration);
+		
+		int count = GetCountRouteRuns(routeId);
+		RunRoutes runRoute = new RunRoutes(null,distance, duration, count, routeId);
+		_runRoutesDao.insert(runRoute);
 		_routesDao.update(route);
 	}
 	
 	public void AddWayPoint(long routeId, int count, double lat, double lng, double distance){
-		WayPoints wayPoint = new WayPoints(null, count, lat, lng, distance, routeId);
+		WayPoints wayPoint = new WayPoints(null, lat, lng, distance, routeId, count);
 		_waypointsDao.insert(wayPoint);
 	}
 	
@@ -74,9 +85,9 @@ public class Repository implements IRepository {
 	}
 	
 	public int GetRunTimesRoute(long routeId){
-		return _waypointsDao.queryBuilder()
-			.where(Properties.RouteId.eq(routeId))
-			.orderDesc(Properties.Count).limit(1)
+		return _runRoutesDao.queryBuilder()
+			.where(net.chirripo.entities.RunRoutesDao.Properties.RouteId.eq(routeId))
+			.orderDesc(net.chirripo.entities.RunRoutesDao.Properties.Count).limit(1)
 			.unique()
 			.getCount();
 	}
@@ -87,7 +98,7 @@ public class Repository implements IRepository {
 	
 	public void DeleteWayPoints(long routeId){
 		List<WayPoints> waypoints =  _waypointsDao.queryBuilder()
-				.where(Properties.RouteId.eq(routeId))
+				.where(net.chirripo.entities.WayPointsDao.Properties.RouteId.eq(routeId))
 				.list();
 			
 		for(WayPoints i: waypoints){
@@ -96,13 +107,78 @@ public class Repository implements IRepository {
 	}
 
 	public int GetCountRouteRuns(long routeId){
-		WayPoints element = _waypointsDao.queryBuilder().where(Properties.RouteId.eq(routeId)).orderDesc(Properties.Count).unique();
+		RunRoutes element = _runRoutesDao.queryBuilder()
+								.where(net.chirripo.entities.RunRoutesDao.Properties.RouteId.eq(routeId))
+								.orderDesc(net.chirripo.entities.RunRoutesDao.Properties.Count).limit(1).unique();
 		
 		return element != null ?  element.getCount() + 1 : 0;
 	}
 	
+	public RouteModel GetSlowerRun(long routeId){
+		Routes route = GetRoute(routeId);
+		RunRoutes slowerRun = _runRoutesDao.queryBuilder()
+								.where(net.chirripo.entities.RunRoutesDao.Properties.RouteId.eq(routeId))
+								.orderAsc(net.chirripo.entities.RunRoutesDao.Properties.Duration)
+								.limit(1)
+								.unique();
+		List<WayPoints> waypoints = _waypointsDao.queryBuilder()
+								.where(Properties.Count.eq(slowerRun.getCount())).list();
+		return CreateRouteModel(slowerRun, route, waypoints);
+	}
+	
+	public RouteModel GetFasterRun(long routeId){
+		Routes route = GetRoute(routeId);
+		RunRoutes fasterRun = _runRoutesDao.queryBuilder()
+				.where(net.chirripo.entities.RunRoutesDao.Properties.RouteId.eq(routeId))
+				.orderDesc(net.chirripo.entities.RunRoutesDao.Properties.Duration)
+				.limit(1)
+				.unique();
+		List<WayPoints> waypoints = _waypointsDao.queryBuilder()
+						.where(Properties.Count.eq(fasterRun.getCount())).list();
+		return CreateRouteModel(fasterRun, route, waypoints);
+	}
+	
+	public double GetSlowerRunDuration(long routeId){
+		RunRoutes slowerRun = _runRoutesDao.queryBuilder()
+				.where(net.chirripo.entities.RunRoutesDao.Properties.RouteId.eq(routeId))
+				.orderAsc(net.chirripo.entities.RunRoutesDao.Properties.Duration)
+				.limit(1)
+				.unique();
+		return slowerRun != null ? slowerRun.getDuration() : 0;
+	}
+	
+	public double GetFasterRunDuration(long routeId){
+		RunRoutes fasterRun = _runRoutesDao.queryBuilder()
+				.where(net.chirripo.entities.RunRoutesDao.Properties.RouteId.eq(routeId))
+				.orderDesc(net.chirripo.entities.RunRoutesDao.Properties.Duration)
+				.limit(1)
+				.unique();
+		
+		return fasterRun != null ? fasterRun.getDuration() : 0;
+	}
+	
 	//Private methods
 	private Routes GetRoute(long routeId) {
-		return _routesDao.queryBuilder().where(Properties.Id.eq(routeId)).unique();
+		return _routesDao.queryBuilder().where(net.chirripo.entities.RunRoutesDao.Properties.Id.eq(routeId)).unique();
+	}
+	
+	private RouteModel CreateRouteModel(RunRoutes runRoute, Routes route, List<WayPoints> waypoints){
+		RouteModel result = new RouteModel();
+		if(runRoute != null) {
+			result.setDistance(runRoute.getDistance());
+			result.setDuration(runRoute.getDuration());
+		}
+		if(route != null){
+			result.setId(route.getId());
+			result.setName(route.getName());
+		}
+		if(waypoints != null){
+			List<WaypointsModel> waypointsList = new ArrayList<WaypointsModel>();
+			for(WayPoints i: waypoints){
+				waypointsList.add(new WaypointsModel(i.getLat(), i.getLng()));
+			}
+			result.setWaypoints(waypointsList);
+		}
+		return result;
 	}
 }

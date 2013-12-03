@@ -17,8 +17,6 @@ public class Routes {
     private double lngStart;
     private double latStop;
     private double lngStop;
-    private double distance;
-    private double duration;
 
     /** Used to resolve relations */
     private transient DaoSession daoSession;
@@ -26,7 +24,9 @@ public class Routes {
     /** Used for active entity operations. */
     private transient RoutesDao myDao;
 
-    private List<WayPoints> orders;
+    private List<RunRoutes> fk_route_runRoutes;
+    private List<WayPoints> fk_route_waypoints;
+    private List<WayPoints> fk_runRoute_waypoints;
 
     public Routes() {
     }
@@ -35,15 +35,13 @@ public class Routes {
         this.id = id;
     }
 
-    public Routes(Long id, String name, double latStart, double lngStart, double latStop, double lngStop, double distance, double duration) {
+    public Routes(Long id, String name, double latStart, double lngStart, double latStop, double lngStop) {
         this.id = id;
         this.name = name;
         this.latStart = latStart;
         this.lngStart = lngStart;
         this.latStop = latStop;
         this.lngStop = lngStop;
-        this.distance = distance;
-        this.duration = duration;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -102,42 +100,70 @@ public class Routes {
         this.lngStop = lngStop;
     }
 
-    public double getDistance() {
-        return distance;
+    /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
+    public List<RunRoutes> getFk_route_runRoutes() {
+        if (fk_route_runRoutes == null) {
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            RunRoutesDao targetDao = daoSession.getRunRoutesDao();
+            List<RunRoutes> fk_route_runRoutesNew = targetDao._queryRoutes_Fk_route_runRoutes(id);
+            synchronized (this) {
+                if(fk_route_runRoutes == null) {
+                    fk_route_runRoutes = fk_route_runRoutesNew;
+                }
+            }
+        }
+        return fk_route_runRoutes;
     }
 
-    public void setDistance(double distance) {
-        this.distance = distance;
-    }
-
-    public double getDuration() {
-        return duration;
-    }
-
-    public void setDuration(double duration) {
-        this.duration = duration;
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    public synchronized void resetFk_route_runRoutes() {
+        fk_route_runRoutes = null;
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
-    public List<WayPoints> getOrders() {
-        if (orders == null) {
+    public List<WayPoints> getFk_route_waypoints() {
+        if (fk_route_waypoints == null) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             WayPointsDao targetDao = daoSession.getWayPointsDao();
-            List<WayPoints> ordersNew = targetDao._queryRoutes_Orders(id);
+            List<WayPoints> fk_route_waypointsNew = targetDao._queryRoutes_Fk_route_waypoints(id);
             synchronized (this) {
-                if(orders == null) {
-                    orders = ordersNew;
+                if(fk_route_waypoints == null) {
+                    fk_route_waypoints = fk_route_waypointsNew;
                 }
             }
         }
-        return orders;
+        return fk_route_waypoints;
     }
 
     /** Resets a to-many relationship, making the next get call to query for a fresh result. */
-    public synchronized void resetOrders() {
-        orders = null;
+    public synchronized void resetFk_route_waypoints() {
+        fk_route_waypoints = null;
+    }
+
+    /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
+    public List<WayPoints> getFk_runRoute_waypoints() {
+        if (fk_runRoute_waypoints == null) {
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            WayPointsDao targetDao = daoSession.getWayPointsDao();
+            List<WayPoints> fk_runRoute_waypointsNew = targetDao._queryRoutes_Fk_runRoute_waypoints(id);
+            synchronized (this) {
+                if(fk_runRoute_waypoints == null) {
+                    fk_runRoute_waypoints = fk_runRoute_waypointsNew;
+                }
+            }
+        }
+        return fk_runRoute_waypoints;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    public synchronized void resetFk_runRoute_waypoints() {
+        fk_runRoute_waypoints = null;
     }
 
     /** Convenient call for {@link AbstractDao#delete(Object)}. Entity must attached to an entity context. */

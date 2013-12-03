@@ -41,4 +41,20 @@ public class Logic {
 	public int GetCountRouteRuns(long routeId){
 		return _repository.GetCountRouteRuns(routeId);
 	}
+	
+	public RouteModel GetSlowerRun(long routeId){
+		return _repository.GetSlowerRun(routeId);
+	}
+	
+	public RouteModel GetFasterRun(long routeId){
+		return _repository.GetFasterRun(routeId);
+	}
+	
+	public double GetSlowerRunDuration(long routeId){
+		return _repository.GetSlowerRunDuration(routeId);
+	}
+	
+	public double GetFasterRunDuration(long routeId){
+		return _repository.GetFasterRunDuration(routeId);
+	}
 }
