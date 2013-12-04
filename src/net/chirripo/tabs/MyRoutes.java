@@ -44,8 +44,8 @@ public class MyRoutes extends Fragment {
                 //Toast.makeText(ctx, "You Clicked at " + routes.get(position).getName()  + " " + routes.get(position).getId() , Toast.LENGTH_SHORT).show();
             	Intent runRoute = new Intent(ctx, RunningRoute.class);
             	runRoute.putExtra("routeName", routes.get(position).getName().toString());
-            	runRoute.putExtra("routeId", routes.get(position).getId());
-                startActivity(runRoute);	                
+            	runRoute.putExtra("routeId", routes.get(position).getId()); 
+            	startActivity(runRoute);
             }
         });
         return rootView;

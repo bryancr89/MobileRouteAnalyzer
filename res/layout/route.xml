@@ -29,7 +29,7 @@
         android:layout_alignLeft="@+id/show_distance"
         android:layout_below="@+id/show_distance"
         android:layout_marginTop="15dp"
-        android:text="Chronometer" />
+        android:text="@string/default_chronometer" />
 
     <ImageButton
         android:id="@+id/start_button"

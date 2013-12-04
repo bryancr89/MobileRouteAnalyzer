@@ -59,6 +59,7 @@ public class Route extends Fragment {
 	private Double _routeDistance = 0.0;
 	private Double _distanceKilometers = 0.0;
 	private Chronometer _routeChronometer;
+	private long _timeRouteSeconds;
 	
 	Logic dbLogic;
 	
@@ -143,6 +144,9 @@ public class Route extends Fragment {
 					
 					dbLogic.UpdateRoute(_routeId, _myLocation.latitude, _myLocation.longitude);
 					
+					long elapsedMillis = SystemClock.elapsedRealtime() - _routeChronometer.getBase();
+					_timeRouteSeconds =  ((elapsedMillis / 1000) % 60);
+					
 					//create and show alert dialog for save the route
 					createSaveRouteDialog();
 				}				
@@ -177,8 +181,8 @@ public class Route extends Fragment {
         @Override
         public void onConnected(Bundle arg0) {
             LocationRequest locationRequest = LocationRequest.create();
-            locationRequest.setFastestInterval(10000);
-            locationRequest.setInterval(10000).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            locationRequest.setFastestInterval(1000);
+            locationRequest.setInterval(1000).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
             _locationClient.requestLocationUpdates(locationRequest, mLocationListener);            
             
             _location = _locationClient.getLastLocation();
@@ -227,12 +231,11 @@ public class Route extends Fragment {
                 	
                 	_distanceKilometers = _routeDistance / 1000;     
                 	
-                	String showDistance = String.format("%.8f", _distanceKilometers);
-                	
+                	String showDistance = String.format("%.8f", _distanceKilometers);                	
     				_distanceTextView.setText(showDistance + " km");
                 	
                 	_wayPointsList.add(_myLocation);
-                	dbLogic.AddWayPoint(_routeId, _countRouteRuns, _myLocation.latitude, _myLocation.longitude, _distanceKilometers);
+                	dbLogic.AddWayPoint(_routeId, _countRouteRuns, _myLocation.latitude, _myLocation.longitude, distance[0]);
                 }
 				
         }
@@ -278,12 +281,11 @@ public class Route extends Fragment {
 				if(TextUtils.isEmpty(getRouteName.trim())){
 					Toast.makeText(_rootView.getContext(), "Route Name Required", Toast.LENGTH_SHORT).show();
 				}else{					
-					dbLogic.SaveRoute(_routeId, getRouteName, 0, 0);						
+					dbLogic.SaveRoute(_routeId, getRouteName, _timeRouteSeconds, _distanceKilometers);						
 					setDefaultValues();					
 					Toast.makeText(_rootView.getContext(), "Route Saved", Toast.LENGTH_LONG).show();
 					alertSaveRoute.dismiss();
-				}
-				
+				}				
 			}
 		});
     }

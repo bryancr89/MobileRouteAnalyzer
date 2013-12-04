@@ -2,24 +2,43 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginEnd="10dp"
+    android:layout_height="match_parent"    
     android:orientation="vertical" >
 
     <fragment
-        android:id="@+id/map22"
+        android:id="@+id/map_running"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:layout_margin="0dp"
-        android:layout_marginBottom="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_margin="10dp"
         class="com.google.android.gms.maps.MapFragment" />
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/fastest_route_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/map22"
-        android:layout_below="@+id/map22"
-        android:text="TextView" />
+        android:layout_alignLeft="@+id/map_running"
+        android:layout_below="@+id/map_running"
+        android:text="@string/quickest_route" />
+
+    <TextView
+        android:id="@+id/slowest_route_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/fastest_route_label"
+        android:layout_below="@+id/fastest_route_label"
+        android:layout_marginTop="15dp"
+        android:text="@string/slowest_route" />
+
+    <TextView
+        android:id="@+id/average_time_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/slowest_route_label"
+        android:layout_below="@+id/slowest_route_label"
+        android:layout_marginTop="15dp"
+        android:text="@string/average_transit_time" />
+
+    
 
 </RelativeLayout>
