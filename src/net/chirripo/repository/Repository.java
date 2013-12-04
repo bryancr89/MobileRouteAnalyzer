@@ -76,6 +76,18 @@ public class Repository implements IRepository {
 		_waypointsDao.insert(wayPoint);
 	}
 	
+	public RouteModel GetFirstRunRouteById(long routeId){
+		Routes route = GetRoute(routeId);
+		RunRoutes firstRunRoute = _runRoutesDao.queryBuilder()
+								.where(net.chirripo.entities.RunRoutesDao.Properties.RouteId.eq(routeId))
+								.orderAsc(net.chirripo.entities.RunRoutesDao.Properties.Count)
+								.limit(1)
+								.unique();
+		List<WayPoints> waypoints = _waypointsDao.queryBuilder()
+								.where(Properties.Count.eq(firstRunRoute.getCount())).list();
+		return CreateRouteModel(firstRunRoute, route, waypoints);
+	}
+	
 	public List<RouteModel> GetListRoutes() {
 		List<Routes> routes = _routesDao.queryBuilder().list();
 		List<RouteModel> result = new ArrayList<RouteModel>();
@@ -110,8 +122,9 @@ public class Repository implements IRepository {
 	public int GetCountRouteRuns(long routeId){
 		RunRoutes element = _runRoutesDao.queryBuilder()
 								.where(net.chirripo.entities.RunRoutesDao.Properties.RouteId.eq(routeId))
-								.orderDesc(net.chirripo.entities.RunRoutesDao.Properties.Count).limit(1).unique();
-		
+								.orderDesc(net.chirripo.entities.RunRoutesDao.Properties.Count)
+								.limit(1)
+								.unique();		
 		return element != null ?  element.getCount() + 1 : 0;
 	}
 	
@@ -183,7 +196,7 @@ public class Repository implements IRepository {
 		if(runRoute != null) {
 			result.setDistance(runRoute.getDistance());
 			result.setDuration(runRoute.getDuration());
-			result.setRunDate(runRoute.getRunDate());
+			//result.setRunDate(runRoute.getRundate());
 		}
 		if(route != null){
 			result.setId(route.getId());

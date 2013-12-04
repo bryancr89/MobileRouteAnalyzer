@@ -1,6 +1,7 @@
 package net.chirripo.logic;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
 import net.chirripo.models.*;
@@ -11,6 +12,10 @@ public class Logic {
 	
 	public Logic(Context ctx){
 		_repository = new Repository(ctx);
+	}
+	
+	public RouteModel GetFirstRunRouteById(long routeId){
+		return _repository.GetFirstRunRouteById(routeId);
 	}
 	
 	public List<RouteModel> GetListRoutes(){
@@ -50,8 +55,14 @@ public class Logic {
 		return _repository.GetFasterRun(routeId);
 	}
 	
-	public double GetSlowerRunDuration(long routeId){
-		return _repository.GetSlowerRunDuration(routeId);
+	public String GetSlowerRunDuration(long routeId){
+		double slowerRun = _repository.GetSlowerRunDuration(routeId);
+		
+		double hours = (slowerRun / 3600),
+				remainder = slowerRun % 3600, 
+				minutes = remainder / 60, 
+				seconds = remainder % 60; 
+		return String.format("%1$d %2$d %3$d", hours, minutes, seconds); 
 	}
 	
 	public double GetFasterRunDuration(long routeId){

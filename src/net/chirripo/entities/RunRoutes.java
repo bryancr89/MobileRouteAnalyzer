@@ -10,8 +10,7 @@ public class RunRoutes {
     private double distance;
     private double duration;
     private int count;
-    /** Not-null value. */
-    private java.util.Date runDate;
+    private java.util.Date rundate;
     private long routeId;
 
     public RunRoutes() {
@@ -21,12 +20,12 @@ public class RunRoutes {
         this.id = id;
     }
 
-    public RunRoutes(Long id, double distance, double duration, int count, java.util.Date runDate, long routeId) {
+    public RunRoutes(Long id, double distance, double duration, int count, java.util.Date rundate, long routeId) {
         this.id = id;
         this.distance = distance;
         this.duration = duration;
         this.count = count;
-        this.runDate = runDate;
+        this.rundate = rundate;
         this.routeId = routeId;
     }
 
@@ -62,14 +61,12 @@ public class RunRoutes {
         this.count = count;
     }
 
-    /** Not-null value. */
-    public java.util.Date getRunDate() {
-        return runDate;
+    public java.util.Date getRundate() {
+        return rundate;
     }
 
-    /** Not-null value; ensure this value is available before it is saved to the database. */
-    public void setRunDate(java.util.Date runDate) {
-        this.runDate = runDate;
+    public void setRundate(java.util.Date rundate) {
+        this.rundate = rundate;
     }
 
     public long getRouteId() {

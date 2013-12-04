@@ -30,7 +30,7 @@ public class RunRoutesDao extends AbstractDao<RunRoutes, Long> {
         public final static Property Distance = new Property(1, double.class, "distance", false, "DISTANCE");
         public final static Property Duration = new Property(2, double.class, "duration", false, "DURATION");
         public final static Property Count = new Property(3, int.class, "count", false, "COUNT");
-        public final static Property RunDate = new Property(4, java.util.Date.class, "runDate", false, "RUN_DATE");
+        public final static Property Rundate = new Property(4, java.util.Date.class, "rundate", false, "RUNDATE");
         public final static Property RouteId = new Property(5, long.class, "routeId", false, "ROUTE_ID");
     };
 
@@ -52,7 +52,7 @@ public class RunRoutesDao extends AbstractDao<RunRoutes, Long> {
                 "'DISTANCE' REAL NOT NULL ," + // 1: distance
                 "'DURATION' REAL NOT NULL ," + // 2: duration
                 "'COUNT' INTEGER NOT NULL ," + // 3: count
-                "'RUN_DATE' INTEGER NOT NULL ," + // 4: runDate
+                "'RUNDATE' INTEGER," + // 4: rundate
                 "'ROUTE_ID' INTEGER NOT NULL );"); // 5: routeId
     }
 
@@ -74,7 +74,11 @@ public class RunRoutesDao extends AbstractDao<RunRoutes, Long> {
         stmt.bindDouble(2, entity.getDistance());
         stmt.bindDouble(3, entity.getDuration());
         stmt.bindLong(4, entity.getCount());
-        stmt.bindLong(5, entity.getRunDate().getTime());
+ 
+        java.util.Date rundate = entity.getRundate();
+        if (rundate != null) {
+            stmt.bindLong(5, rundate.getTime());
+        }
         stmt.bindLong(6, entity.getRouteId());
     }
 
@@ -92,7 +96,7 @@ public class RunRoutesDao extends AbstractDao<RunRoutes, Long> {
             cursor.getDouble(offset + 1), // distance
             cursor.getDouble(offset + 2), // duration
             cursor.getInt(offset + 3), // count
-            new java.util.Date(cursor.getLong(offset + 4)), // runDate
+            cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)), // rundate
             cursor.getLong(offset + 5) // routeId
         );
         return entity;
@@ -105,7 +109,7 @@ public class RunRoutesDao extends AbstractDao<RunRoutes, Long> {
         entity.setDistance(cursor.getDouble(offset + 1));
         entity.setDuration(cursor.getDouble(offset + 2));
         entity.setCount(cursor.getInt(offset + 3));
-        entity.setRunDate(new java.util.Date(cursor.getLong(offset + 4)));
+        entity.setRundate(cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)));
         entity.setRouteId(cursor.getLong(offset + 5));
      }
     

@@ -15,6 +15,8 @@ public interface IRepository {
 	
 	void AddWayPoint(long routeId, int count, double lat, double lng, double distance);
 	
+	RouteModel GetFirstRunRouteById(long routeId);
+	
 	List<RouteModel>GetListRoutes();
 	
 	int GetRunTimesRoute(long routeId);
