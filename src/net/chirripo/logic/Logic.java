@@ -57,19 +57,24 @@ public class Logic {
 	
 	public String GetSlowerRunDuration(long routeId){
 		double slowerRun = _repository.GetSlowerRunDuration(routeId);
-		
-		double hours = (slowerRun / 3600),
-				remainder = slowerRun % 3600, 
+		return GetTime(slowerRun); 
+	}
+	
+	public String GetFasterRunDuration(long routeId){
+		double fastestRun = _repository.GetFasterRunDuration(routeId);
+		return GetTime(fastestRun);
+	}
+	
+	public String GetAvgRoute(long routeId){
+		double avgRun = _repository.GetAvgRoute(routeId);
+		return GetTime(avgRun);
+	}
+	
+	private String GetTime(double totalSeconds){
+		double hours = (totalSeconds / 3600),
+				remainder = totalSeconds % 3600, 
 				minutes = remainder / 60, 
 				seconds = remainder % 60; 
-		return String.format("%1$d %2$d %3$d", hours, minutes, seconds); 
-	}
-	
-	public double GetFasterRunDuration(long routeId){
-		return _repository.GetFasterRunDuration(routeId);
-	}
-	
-	public double GetAvgRoute(long routeId){
-		return _repository.GetAvgRoute(routeId);
+		return String.format("%dh: %dm: %ds", (int)hours, (int)minutes, (int)seconds);
 	}
 }

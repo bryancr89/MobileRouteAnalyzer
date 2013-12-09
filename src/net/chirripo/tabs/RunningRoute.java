@@ -11,6 +11,7 @@ import net.chirripo.models.WaypointsModel;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -45,6 +46,15 @@ public class RunningRoute extends Activity {
         
         routeObject = _logic.GetFirstRunRouteById(_routeId);
         
+        //set the fastest value of this route
+        TextView txtViewFastest= (TextView)findViewById(R.id.fastest_value);
+        txtViewFastest.setText(_logic.GetFasterRunDuration(_routeId));
+        //set the slowest value of this route
+        TextView txtViewSlowest= (TextView)findViewById(R.id.slowest_value);
+        txtViewSlowest.setText(_logic.GetSlowerRunDuration(_routeId));
+        //set the AVG value of this route
+        TextView txtViewAvg = (TextView)findViewById(R.id.avg_value);
+        txtViewAvg.setText(_logic.GetAvgRoute(_routeId));
         //set the route name to the activity title
         setTitle(_routeName);
         

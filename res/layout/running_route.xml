@@ -20,6 +20,15 @@
         android:layout_alignLeft="@+id/map_running"
         android:layout_below="@+id/map_running"
         android:text="@string/quickest_route" />
+    
+    <TextView
+        android:id="@+id/fastest_value"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/fastest_route_label"
+        android:layout_marginLeft="10dp"
+        android:textStyle="bold"
+        android:layout_toRightOf="@+id/fastest_route_label" />
 
     <TextView
         android:id="@+id/slowest_route_label"
@@ -29,6 +38,15 @@
         android:layout_below="@+id/fastest_route_label"
         android:layout_marginTop="15dp"
         android:text="@string/slowest_route" />
+    
+    <TextView
+        android:id="@+id/slowest_value"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/slowest_route_label"
+        android:layout_marginLeft="10dp"
+        android:textStyle="bold"
+        android:layout_toRightOf="@+id/slowest_route_label" />
 
     <TextView
         android:id="@+id/average_time_label"
@@ -39,6 +57,13 @@
         android:layout_marginTop="15dp"
         android:text="@string/average_transit_time" />
 
-    
+    <TextView
+        android:id="@+id/avg_value"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/average_time_label"
+        android:layout_marginLeft="10dp"
+        android:textStyle="bold" 
+        android:layout_toRightOf="@+id/average_time_label" />
 
 </RelativeLayout>
