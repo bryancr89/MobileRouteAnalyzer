@@ -8,18 +8,10 @@
     <fragment
         android:id="@+id/map_running"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="280dp"
         android:layout_alignParentRight="true"
-        android:layout_margin="10dp"
+        android:layout_margin="5dp"
         class="com.google.android.gms.maps.MapFragment" />
-
-    <TextView
-        android:id="@+id/fastest_route_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/map_running"
-        android:layout_below="@+id/map_running"
-        android:text="@string/quickest_route" />
     
     <TextView
         android:id="@+id/fastest_value"
@@ -29,33 +21,14 @@
         android:layout_marginLeft="10dp"
         android:textStyle="bold"
         android:layout_toRightOf="@+id/fastest_route_label" />
-
-    <TextView
-        android:id="@+id/slowest_route_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/fastest_route_label"
-        android:layout_below="@+id/fastest_route_label"
-        android:layout_marginTop="15dp"
-        android:text="@string/slowest_route" />
     
     <TextView
         android:id="@+id/slowest_value"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/slowest_route_label"
-        android:layout_marginLeft="10dp"
-        android:textStyle="bold"
-        android:layout_toRightOf="@+id/slowest_route_label" />
-
-    <TextView
-        android:id="@+id/average_time_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/slowest_route_label"
-        android:layout_below="@+id/slowest_route_label"
-        android:layout_marginTop="15dp"
-        android:text="@string/average_transit_time" />
+        android:layout_toRightOf="@+id/fastest_route_label"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/avg_value"
@@ -65,5 +38,82 @@
         android:layout_marginLeft="10dp"
         android:textStyle="bold" 
         android:layout_toRightOf="@+id/average_time_label" />
+
+    <Chronometer
+        android:id="@+id/running_route_chronometer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/time_running_label"
+        android:layout_toRightOf="@+id/distance_running_label"
+        android:text="@string/default_chronometer" />
+
+    <TextView
+        android:id="@+id/average_time_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/slowest_route_label"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="28dp"
+        android:text="@string/average_transit_time" />
+
+    <TextView
+        android:id="@+id/slowest_route_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/average_time_label"
+        android:layout_alignLeft="@+id/fastest_route_label"
+        android:layout_marginBottom="17dp"
+        android:text="@string/slowest_route" />
+
+    <ImageButton
+        android:id="@+id/stop_route_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/map_running"
+        android:layout_toRightOf="@+id/run_route_button"
+        android:src="@drawable/ic_action_stop" />
+
+    <ImageButton
+        android:id="@+id/run_route_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/map_running"
+        android:layout_alignTop="@+id/stop_route_button"
+        android:src="@drawable/ic_action_play" />
+
+    <TextView
+        android:id="@+id/distance_running_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/stop_route_button"
+        android:layout_toRightOf="@+id/average_time_label"
+        android:text="@string/show_distance" />
+
+    <TextView
+        android:id="@+id/time_running_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/stop_route_button"
+        android:layout_marginBottom="14dp"
+        android:layout_toRightOf="@+id/average_time_label"
+        android:text="@string/show_time" />
+
+    <TextView
+        android:id="@+id/show_running_distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/distance_running_label"
+        android:layout_alignBottom="@+id/distance_running_label"
+        android:layout_toRightOf="@+id/running_route_chronometer"
+        android:text="@string/default_distance" />
+
+    <TextView
+        android:id="@+id/fastest_route_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/slowest_value"
+        android:layout_alignLeft="@+id/run_route_button"
+        android:layout_marginBottom="18dp"
+        android:text="@string/quickest_route" />
 
 </RelativeLayout>
