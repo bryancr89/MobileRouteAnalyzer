@@ -1,6 +1,8 @@
 package net.chirripo.repository;
 
 import java.util.List;
+
+import net.chirripo.entities.RunRoutes;
 import net.chirripo.models.*;
 
 public interface IRepository {
@@ -33,9 +35,9 @@ public interface IRepository {
 	
 	RouteModel GetFasterRun(long routeId);
 	
-	double GetSlowerRunDuration(long routeId);
+	RunRoutes GetSlowerRunDuration(long routeId);
 	
-	double GetFasterRunDuration(long routeId);
+	RunRoutes GetFasterRunDuration(long routeId);
 	
 	double GetAvgRoute(long routeId);
 }

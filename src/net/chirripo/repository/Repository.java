@@ -157,23 +157,22 @@ public class Repository implements IRepository {
 		return CreateRouteModel(fasterRun, route, waypoints);
 	}
 	
-	public double GetSlowerRunDuration(long routeId){
+	public RunRoutes GetSlowerRunDuration(long routeId){
 		RunRoutes slowerRun = _runRoutesDao.queryBuilder()
 				.where(net.chirripo.entities.RunRoutesDao.Properties.RouteId.eq(routeId))
 				.orderDesc(net.chirripo.entities.RunRoutesDao.Properties.Duration)
 				.limit(1)
 				.unique();
-		return slowerRun != null ? slowerRun.getDuration() : 0;
+		return slowerRun;
 	}
 	
-	public double GetFasterRunDuration(long routeId){
+	public RunRoutes GetFasterRunDuration(long routeId){
 		RunRoutes fasterRun = _runRoutesDao.queryBuilder()
 				.where(net.chirripo.entities.RunRoutesDao.Properties.RouteId.eq(routeId))
 				.orderAsc(net.chirripo.entities.RunRoutesDao.Properties.Duration)
 				.limit(1)
 				.unique();
-		
-		return fasterRun != null ? fasterRun.getDuration() : 0;
+		return fasterRun;
 	}
 	
 	public double GetAvgRoute(long routeId){

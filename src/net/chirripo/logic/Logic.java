@@ -1,14 +1,17 @@
 package net.chirripo.logic;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
+import net.chirripo.entities.RunRoutes;
 import net.chirripo.models.*;
 import net.chirripo.repository.Repository;
 
 public class Logic {
 	private Repository _repository;
+	private SimpleDateFormat formatDate= new SimpleDateFormat("MM/dd/yyyy");
 	
 	public Logic(Context ctx){
 		_repository = new Repository(ctx);
@@ -60,13 +63,20 @@ public class Logic {
 	}
 	
 	public String GetSlowerRunDuration(long routeId){
-		double slowerRun = _repository.GetSlowerRunDuration(routeId);
-		return GetTime(slowerRun); 
+		RunRoutes slowerRun = _repository.GetSlowerRunDuration(routeId);
+		
+		if(slowerRun != null) {
+			return GetTime(slowerRun.getDuration()) + "  -  " + formatDate.format(slowerRun.getRundate());
+		}
+		return ""; 
 	}
 	
 	public String GetFasterRunDuration(long routeId){
-		double fastestRun = _repository.GetFasterRunDuration(routeId);
-		return GetTime(fastestRun);
+		RunRoutes fastestRun = _repository.GetFasterRunDuration(routeId);
+		if(fastestRun != null) {
+			return GetTime(fastestRun.getDuration()) + "  -  " + formatDate.format(fastestRun.getRundate());
+		}
+		return "";
 	}
 	
 	public String GetAvgRoute(long routeId){
