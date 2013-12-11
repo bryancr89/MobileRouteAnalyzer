@@ -160,7 +160,7 @@ public class Repository implements IRepository {
 	public double GetSlowerRunDuration(long routeId){
 		RunRoutes slowerRun = _runRoutesDao.queryBuilder()
 				.where(net.chirripo.entities.RunRoutesDao.Properties.RouteId.eq(routeId))
-				.orderAsc(net.chirripo.entities.RunRoutesDao.Properties.Duration)
+				.orderDesc(net.chirripo.entities.RunRoutesDao.Properties.Duration)
 				.limit(1)
 				.unique();
 		return slowerRun != null ? slowerRun.getDuration() : 0;
@@ -169,7 +169,7 @@ public class Repository implements IRepository {
 	public double GetFasterRunDuration(long routeId){
 		RunRoutes fasterRun = _runRoutesDao.queryBuilder()
 				.where(net.chirripo.entities.RunRoutesDao.Properties.RouteId.eq(routeId))
-				.orderDesc(net.chirripo.entities.RunRoutesDao.Properties.Duration)
+				.orderAsc(net.chirripo.entities.RunRoutesDao.Properties.Duration)
 				.limit(1)
 				.unique();
 		

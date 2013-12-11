@@ -39,4 +39,3 @@ public interface IRepository {
 	
 	double GetAvgRoute(long routeId);
 }
-
