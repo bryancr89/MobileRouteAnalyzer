@@ -13,6 +13,8 @@ public interface IRepository {
 	
 	void SaveRoute(long routeId, String name, double duration, double distance);
 	
+	void SaveRanRoute(long routeId, double duration, double distance);
+	
 	void AddWayPoint(long routeId, int count, double lat, double lng, double distance);
 	
 	RouteModel GetFirstRunRouteById(long routeId);

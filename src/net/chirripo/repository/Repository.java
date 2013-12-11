@@ -65,10 +65,15 @@ public class Repository implements IRepository {
 		Routes route = GetRoute(routeId);
 		route.setName(name);
 		
+		SaveRanRoute(routeId, duration, distance);
+		_routesDao.update(route);
+	}
+	
+	public void SaveRanRoute(long routeId, double duration, double distance){
 		int count = GetCountRouteRuns(routeId);
+		
 		RunRoutes runRoute = new RunRoutes(null,distance, duration, count, new Date(), routeId);
 		_runRoutesDao.insert(runRoute);
-		_routesDao.update(route);
 	}
 	
 	public void AddWayPoint(long routeId, int count, double lat, double lng, double distance){

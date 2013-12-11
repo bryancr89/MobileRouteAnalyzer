@@ -34,6 +34,10 @@ public class Logic {
 		_repository.SaveRoute(routeId, name, duration, distance);
 	}
 	
+	public void SaveRanRoute(long routeId, double duration, double distance){
+		_repository.SaveRanRoute(routeId, duration, distance);
+	}
+	
 	public void AddWayPoint(long routeId, int count, double lat, double lng, double distance){
 		_repository.AddWayPoint(routeId, count, lat, lng, distance);
 	}
