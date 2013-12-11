@@ -2,26 +2,28 @@ package net.chirripo.tabs;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import net.chirripo.logic.Logic;
 import net.chirripo.mobilerouteanalyzer.R;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
@@ -30,21 +32,20 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-public class Route extends Fragment {
+public class Route extends Activity {
 	
 	private GoogleMap _map;
 	private Location _location;
 	private LatLng _myLocation;
 	private LocationClient _locationClient;
-	private float _zoom = 16;
-	private View _rootView;
+	private float _zoom = 16;	
 	private TextView _distanceTextView;
 	private ImageButton _startButton;
 	private ImageButton _stopButton;	
@@ -60,21 +61,24 @@ public class Route extends Fragment {
 	private Double _distanceKilometers = 0.0;
 	private Chronometer _routeChronometer;
 	private long _timeRouteSeconds;
+	private Context _ctx;
 	
 	Logic dbLogic;
 	
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
  
-        _rootView = inflater.inflate(R.layout.route, container, false);
-        _distanceTextView = (TextView) _rootView.findViewById(R.id.show_distance);
-        _routeChronometer = (Chronometer) _rootView.findViewById(R.id.time_chronometer);
+    	super.onCreate(savedInstanceState);
+		setContentView(R.layout.route);        
         
-        dbLogic = new Logic(_rootView.getContext());
+        _distanceTextView = (TextView)findViewById(R.id.show_distance);
+        _routeChronometer = (Chronometer)findViewById(R.id.time_chronometer);
+        _ctx = this;
+        
+        dbLogic = new Logic(this);
         
         //initialization and onClick listener for start button
-        _startButton = (ImageButton)_rootView.findViewById(R.id.start_button);
+        _startButton = (ImageButton)findViewById(R.id.start_button);
         _startButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -100,25 +104,25 @@ public class Route extends Fragment {
 					
 					_routeId = dbLogic.AddRoute(_myLocation.latitude, _myLocation.longitude);
 					_countRouteRuns = dbLogic.GetCountRouteRuns(_routeId);
-					Toast.makeText(_rootView.getContext(), "Starting Route...", Toast.LENGTH_SHORT).show();	
+					Toast.makeText(_ctx, "Starting Route...", Toast.LENGTH_SHORT).show();	
 					
 				}else{
-					Toast.makeText(_rootView.getContext(), "Calculating Route...", Toast.LENGTH_SHORT).show();
+					Toast.makeText(_ctx, "Calculating Route...", Toast.LENGTH_SHORT).show();
 				}				
 			}
 		});
         
         //initialization and onClick listener for end button
-        _stopButton = (ImageButton)_rootView.findViewById(R.id.stop_button);
+        _stopButton = (ImageButton)findViewById(R.id.stop_button);
         _stopButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				
 				if(_wayPointsList.isEmpty()){
-					Toast.makeText(_rootView.getContext(), "Route Start Point Required", Toast.LENGTH_SHORT).show();
+					Toast.makeText(_ctx, "Route Start Point Required", Toast.LENGTH_SHORT).show();
 				}else if(_isStopSet){
-					Toast.makeText(_rootView.getContext(), "Route Calculated", Toast.LENGTH_SHORT).show();
+					Toast.makeText(_ctx, "Route Calculated", Toast.LENGTH_SHORT).show();
 				}else{
 					if(_endMarker != null){
 						_endMarker.remove();
@@ -154,20 +158,17 @@ public class Route extends Fragment {
 		});
         
         //map initialization 
-        _map = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map))
-                .getMap();        
+        _map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();   
         _map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         _map.setMyLocationEnabled(true);
                
         //call the function to relocated the user in its current position
-        centerMapOnMyLocation();
-             
-        return _rootView;
+        centerMapOnMyLocation();         
     }
 
     //calls the events to center the map in the current location
     private void centerMapOnMyLocation() {           	
-    	_locationClient = new LocationClient(_rootView.getContext(), mConnectionCallbacks, mConnectionFailedListener);
+    	_locationClient = new LocationClient(_ctx, mConnectionCallbacks, mConnectionFailedListener);
     	_locationClient.connect();
     }
     
@@ -244,9 +245,9 @@ public class Route extends Fragment {
     //function to create a alert dialog to input the route name and then save the route
     private void createSaveRouteDialog(){
     	// get save_route view
-    	LayoutInflater layoutInflater = LayoutInflater.from(_rootView.getContext());
+    	LayoutInflater layoutInflater = LayoutInflater.from(_ctx);
     	View promptView = layoutInflater.inflate(R.layout.save_route, null);
-    	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(_rootView.getContext());
+    	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(_ctx);
     	
     	_routeName = (EditText) promptView.findViewById(R.id.route_name);
     	
@@ -279,11 +280,11 @@ public class Route extends Fragment {
 	    		
     			//validating before save the route
 				if(TextUtils.isEmpty(getRouteName.trim())){
-					Toast.makeText(_rootView.getContext(), "Route Name Required", Toast.LENGTH_SHORT).show();
+					Toast.makeText(_ctx, "Route Name Required", Toast.LENGTH_SHORT).show();
 				}else{					
 					dbLogic.SaveRoute(_routeId, getRouteName, _timeRouteSeconds, _distanceKilometers);						
 					setDefaultValues();					
-					Toast.makeText(_rootView.getContext(), "Route Saved", Toast.LENGTH_LONG).show();
+					Toast.makeText(_ctx, "Route Saved", Toast.LENGTH_LONG).show();
 					alertSaveRoute.dismiss();
 				}				
 			}

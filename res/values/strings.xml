@@ -16,4 +16,6 @@
     <string name="average_transit_time">Average Transit Time:</string>
     <string name="quickest_route">Quickest Route:</string>
 	<string name="slowest_route">Slowest Route:</string>
+	<string name="myroutes_list">My Routes</string>
+	<string name="add_route">Add a Route</string>
 </resources>

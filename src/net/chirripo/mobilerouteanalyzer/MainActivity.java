@@ -1,76 +1,50 @@
 package net.chirripo.mobilerouteanalyzer;
 
-
-import net.chirripo.mobilerouteanalyzer.R;
-import net.chirripo.tabs.TabSwipe;
-import android.app.ActionBar;
-import android.app.ActionBar.Tab;
-import android.app.FragmentTransaction;
+import net.chirripo.tabs.MyRoutes;
+import net.chirripo.tabs.Route;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.ViewPager;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
 
 
-public class MainActivity extends FragmentActivity implements
-	ActionBar.TabListener {
+public class MainActivity extends Activity {
 		 
-	private ViewPager viewPager;
-	private TabSwipe mAdapter;
-	private ActionBar actionBar;
-	// Tab titles
-	private String[] tabs = { "My routes", "Add Route"};
+	private ImageButton _myRoutesButton;
+	private ImageButton _addRouteButton;
+	private Context _ctx;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_main);		
 		
-		// Initilization
-		viewPager = (ViewPager) findViewById(R.id.pager);
-		actionBar = getActionBar();
-		mAdapter = new TabSwipe(getSupportFragmentManager());
+		_myRoutesButton = (ImageButton)findViewById(R.id.my_routes_button);
+		_addRouteButton = (ImageButton)findViewById(R.id.add_route_button);
+		_ctx = this;
 		
-		viewPager.setAdapter(mAdapter);
-		actionBar.setHomeButtonEnabled(false);
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);        
+		//on click event my routes button
+		_myRoutesButton.setOnClickListener(new OnClickListener() {
 		
-		// Adding Tabs
-		for (String tab_name : tabs) {
-		    actionBar.addTab(actionBar.newTab().setText(tab_name)
-		            .setTabListener(this));
-		}
-		
-		viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-			 
-		    @Override
-		    public void onPageSelected(int position) {
-		        // on changing the page
-		        // make respected tab selected
-		        actionBar.setSelectedNavigationItem(position);
-		    }
-		 
-		    @Override
-		    public void onPageScrolled(int arg0, float arg1, int arg2) {
-		    }
-		 
-		    @Override
-		    public void onPageScrollStateChanged(int arg0) {
-		    }
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(_ctx, MyRoutes.class);				 
+				startActivity(intent);						
+			}
 		});
-	}
-
-	@Override
-	public void onTabReselected(Tab tab, FragmentTransaction ft) {
-		viewPager.setCurrentItem(tab.getPosition());
-	}
-
-	@Override
-	public void onTabSelected(Tab tab, FragmentTransaction ft) {
-        viewPager.setCurrentItem(tab.getPosition());
-	}
-
-	@Override
-	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-	}
-    
+		
+		//on click event add route button
+		_addRouteButton.setOnClickListener(new OnClickListener() {
+		
+			@Override
+			public void onClick(View v) {
+				 Intent intent = new Intent(_ctx, Route.class);				 
+				 startActivity(intent);					
+			}
+		});
+		
+	}    
 }
