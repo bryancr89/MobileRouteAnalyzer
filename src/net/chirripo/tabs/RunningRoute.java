@@ -160,6 +160,8 @@ public class RunningRoute extends Activity {
 						long elapsedMillis = SystemClock.elapsedRealtime() - _runningChronometer.getBase();
 						_timeRouteSeconds =  ((elapsedMillis / 1000) % 60);
 						
+						_logic.SaveRanRoute(_routeId, _timeRouteSeconds, _distanceKilometers);
+						
 						Toast.makeText(_ctx, "Ending route..", Toast.LENGTH_LONG).show();
 					}
 				}else{
