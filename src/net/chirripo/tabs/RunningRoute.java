@@ -153,6 +153,9 @@ public class RunningRoute extends Activity {
 						//insert last way point to the list
 						_runningRouteWayPoints.add(_myLocation);
 						
+						//stop the chronometer
+						_runningChronometer.stop();
+						
 						//save time route
 						long elapsedMillis = SystemClock.elapsedRealtime() - _runningChronometer.getBase();
 						_timeRouteSeconds =  ((elapsedMillis / 1000) % 60);
